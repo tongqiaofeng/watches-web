@@ -1,0 +1,57 @@
+{
+  "_args": [
+    [
+      "word@0.3.0",
+      "D:\\aa-tong\\my-projects\\WatchEx_Web"
+    ]
+  ],
+  "_from": "word@0.3.0",
+  "_id": "word@0.3.0",
+  "_inBundle": false,
+  "_integrity": "sha512-OELeY0Q61OXpdUfTp+oweA/vtLVg5VDOXh+3he3PNzLGG/y0oylSOC1xRVj0+l4vQ3tj/bB1HVHv1ocXkQceFA==",
+  "_location": "/word",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "word@0.3.0",
+    "name": "word",
+    "escapedName": "word",
+    "rawSpec": "0.3.0",
+    "saveSpec": null,
+    "fetchSpec": "0.3.0"
+  },
+  "_requiredBy": [
+    "/xlsx"
+  ],
+  "_resolved": "https://registry.npmjs.org/word/-/word-0.3.0.tgz",
+  "_spec": "0.3.0",
+  "_where": "D:\\aa-tong\\my-projects\\WatchEx_Web",
+  "author": {
+    "name": "sheetjs"
+  },
+  "bugs": {
+    "url": "https://github.com/SheetJS/js-word/issues"
+  },
+  "dependencies": {},
+  "description": "Word Processing Document library",
+  "devDependencies": {},
+  "engines": {
+    "node": ">=0.8"
+  },
+  "homepage": "https://wordjs.com/",
+  "keywords": [
+    "word"
+  ],
+  "license": "Apache-2.0",
+  "main": "./word",
+  "name": "word",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/SheetJS/js-word.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "0.3.0"
+}

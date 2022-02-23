@@ -1,0 +1,566 @@
+<template>
+  <div>
+    <!-- <h3>批发价管理页面</h3> -->
+    <div v-if="priceAdmin.select == 0">
+      <div style="width: 95%;margin: 0 auto;">
+        <p style="margin-top: 0;margin-bottom: 20px;color: red;">
+          说明：在批发价变化时，应该及时更新系统。系统会将未设置等级或超过30天未更新批发价的手表标注为红色
+        </p>
+      </div>
+      <div class="report-screen">
+        <div class="report-checked">
+          <el-checkbox
+            v-model="checked1"
+            @change="notputinto"
+            class="el-checkbox__label"
+            >未设置</el-checkbox
+          >
+          <el-checkbox
+            v-model="checked2"
+            @change="alreadyinto"
+            class="el-checkbox__label"
+            >已设置</el-checkbox
+          >
+        </div>
+        <div class="report-sort">
+          <div class="time-sort" @click="timechange" style="cursor: pointer;">
+            <span>入库时间 </span>
+            <div class="caret" v-if="updownshow == true">
+              <i class="el-icon-caret-top" v-if="dispalytype == 2"></i
+              ><i class="el-icon-caret-bottom" v-if="dispalytype == 1"></i>
+            </div>
+          </div>
+          <div class="price-sort" @click="controltime" style="cursor: pointer;">
+            <span>设置时间 </span>
+            <div class="caret" v-if="updownshow == false">
+              <i class="el-icon-caret-top" v-if="dispalytype2 == 1"></i
+              ><i class="el-icon-caret-bottom" v-if="dispalytype2 == 2"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-show="list.length == 0" ref="hello" style="text-align: center;">
+        <p>{{ dataMsg }}</p>
+      </div>
+      <div v-if="list.length !== 0">
+        <div class="price-admin-table">
+          <table>
+            <tr>
+              <th>图片</th>
+              <th>品牌</th>
+              <th>型号</th>
+              <th>手表等级</th>
+              <th>批发价</th>
+              <th>最近更新时间</th>
+              <th>是否需要设置内容</th>
+              <th>操作</th>
+            </tr>
+            <tr v-for="(item, index) of list" :key="index">
+              <td>
+                <img
+                  v-image-preview
+                  :src="
+                    item.buyWatchPics == null || item.buyWatchPics == ''
+                      ? ''
+                      : img + '/img/watch/' + item.buyWatchPics.split('|')[0]
+                  "
+                  class="img-style"
+                />
+              </td>
+              <td>{{ item.buyWatchBrand }}</td>
+              <td>{{ item.buyWatchModel }}</td>
+              <td>
+                <div style="display: flex;justify-content: center;">
+                  <span>{{ item.watchLevel }}</span>
+                  <div>
+                    <img
+                      src="../../assets/imgs/update.png"
+                      style="width: 20px; height: 23px;margin-left: 10px;cursor: pointer;"
+                      @click="updateWatchLevel(item.buyWatchId)"
+                    />
+                  </div>
+                  <el-dialog
+                    title="修改手表等级"
+                    :visible.sync="dialogWatchLevelVisible"
+                  >
+                    <div>
+                      <el-radio-group v-model="watchLevel">
+                        <el-radio label="1"></el-radio>
+                        <el-radio label="2"></el-radio>
+                        <el-radio label="3"></el-radio>
+                        <el-radio label="4"></el-radio>
+                      </el-radio-group>
+                    </div>
+                    <div slot="footer">
+                      <el-button @click="dialogWatchLevelVisible = false"
+                        >取 消</el-button
+                      >
+                      <el-button
+                        type="primary"
+                        @click="updateWatchLevelSure"
+                        v-preventClick
+                        >确 定</el-button
+                      >
+                    </div>
+                  </el-dialog>
+                </div>
+              </td>
+              <td>
+                {{
+                  item.prices.length !== 0
+                    ? companyLoginCurrency +
+                      " " +
+                      formatNumberRgx(item.prices[0].price)
+                    : "暂无"
+                }}
+              </td>
+              <td>
+                {{ item.prices.length !== 0 ? item.prices[0].time : "暂无" }}
+              </td>
+              <td>
+                <span :class="item.flag == 0 ? 'red' : 'green'">{{
+                  item.flag == 0 ? "是" : "否"
+                }}</span>
+              </td>
+              <td>
+                <el-tooltip
+                  class="item"
+                  effect="light"
+                  content="查看详情"
+                  placement="top-end"
+                >
+                  <img
+                    src="../../assets/imgs/details.png"
+                    style="cursor:pointer;"
+                    @click="priceDetails(item)"
+                  />
+                </el-tooltip>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div style="width: 100%;height: 50px;">
+          <div style="margin:15px 0;position:absolute;right:6%;">
+            <el-pagination
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page="priceAdmin.page"
+              layout="total, prev, pager, next, jumper"
+              :total="priceAdmin.total"
+            >
+            </el-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-if="priceAdmin.select == 1">
+      <Price-admin-details
+        :priceDetailsList="priceDetailsList"
+        @gobackPriceAdmin="gobackPriceAdmin"
+      >
+      </Price-admin-details>
+    </div>
+  </div>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      companyLoginCurrency: sessionStorage.getItem("companyLoginCurrency"),
+      dataMsg: "数据加载中...",
+      page: this.priceAdmin.page,
+      pageNum: 10,
+      keyword: this.priceAdmin.keyword,
+      total: this.priceAdmin.total,
+      dataMaketPriceList: this.priceAdmin.dataMaketPriceList,
+      img: this.$store.state.baseUrl,
+      priceDetailsList: {},
+      img1: require("../../assets/imgs/error.png"),
+      img2: require("../../assets/imgs/sureImg.png"),
+      watchLevel: "1", // 手表等级
+      dialogWatchLevelVisible: false,
+      buyWatchId: 0, // 手表id
+      checked1: true,
+      checked2: true,
+      updownshow: true,
+      dispalytype: 1,
+      dispalytype2: 1,
+      num: 1,
+      num2: 1,
+      temporarylist: [],
+      resdata: [],
+      list: [],
+    };
+  },
+  props: ["priceAdmin"],
+  created() {
+    console.log(sessionStorage.getItem("companyLoginCurrency"));
+    this.handleDataMaketPriceList();
+  },
+  methods: {
+    notputinto() {
+      //复选框-- 未设置
+      // console.log(this.checked1);
+      this.Conditionalscreening();
+    },
+    alreadyinto() {
+      //复选框-- 已设置
+      this.Conditionalscreening();
+    },
+    timechange() {
+      //入库时间升降序
+      this.updownshow = true;
+      this.InTimechange();
+    },
+    controltime() {
+      //设置时间升降序
+      this.updownshow = false;
+      this.Settimechange();
+    },
+    gobackPriceAdmin(val) {
+      this.priceAdmin.select = val;
+      // this.priceAdmin.keyword = '';
+      this.priceAdmin.page = 1;
+      if (this.priceAdmin.keyword !== "") {
+        this.stockInSearch();
+      } else {
+        this.handleDataMaketPriceList();
+      }
+      let count = sessionStorage.getItem("maketPriceCount");
+      this.$emit("priceCount", count);
+    },
+    // 获取批发价列表
+    handleDataMaketPriceList() {
+      this.dataMsg = "数据加载中...";
+      this.$axios
+        .post(this.$store.state.baseUrl + "/DataMaketPriceList", {
+          page: this.priceAdmin.page,
+          // pageNum: this.pageNum
+          pageNum: "",
+        })
+        .then((res) => {
+          console.log("批发价列表");
+          console.log(res);
+          this.priceAdmin.total = res.data.total;
+          this.priceAdmin.dataMaketPriceList = res.data.watchs;
+          this.resdata = res.data;
+          // this.dataMaketPriceList = res.data.watchs;
+          this.Conditionalscreening();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    Conditionalscreening() {
+      if (this.priceAdmin.keyword == "") {
+        this.priceAdmin.dataMaketPriceList = this.resdata.watchs;
+      } else {
+        //搜索关键字不为空
+        this.priceAdmin.dataMaketPriceList = this.temporarylist2;
+      }
+      if (this.checked1 == true && this.checked2 == true) {
+        this.temporarylist = [];
+        this.temporarylist = this.priceAdmin.dataMaketPriceList;
+      } else if (this.checked1 == true && this.checked2 == false) {
+        this.temporarylist = [];
+        this.priceAdmin.dataMaketPriceList.forEach((item) => {
+          if (item.prices.length == 0) {
+            this.temporarylist.push(item);
+          }
+        });
+      } else if (this.checked1 == false && this.checked2 == true) {
+        this.temporarylist = [];
+        this.priceAdmin.dataMaketPriceList.forEach((item) => {
+          if (item.prices.length != 0) {
+            this.temporarylist.push(item);
+          }
+        });
+      } else if (this.checked1 == false && this.checked2 == false) {
+        this.temporarylist = [];
+      }
+      this.priceAdmin.dataMaketPriceList = this.temporarylist;
+      console.log(this.temporarylist);
+      this.priceAdmin.total = this.temporarylist.length;
+      if (this.updownshow == true) {
+        if (this.dispalytype == 1) {
+          // console.log("dis1==1--------num2=2");
+          this.num = 1;
+        } else {
+          //保证升降序和和之前一致
+          this.num = 2;
+          // console.log("dis1==2--------num2=1");
+        }
+        this.InTimechange();
+      } else {
+        if (this.dispalytype2 == 1) {
+          // console.log("dis2==1--------num2=2");
+          this.num2 = 1;
+        } else {
+          //保证升降序和和之前一致
+          this.num2 = 2;
+          // console.log("dis2==2--------num2=1");
+        }
+        this.Settimechange();
+      }
+    },
+    InTimechange() {
+      //0入库时间升降序
+      let atime, btime;
+      this.priceAdmin.dataMaketPriceList.sort((a, b) => {
+        atime = a.stockLastInTime;
+        btime = b.stockLastInTime;
+        let aTime = new Date(atime).getTime();
+        let bTime = new Date(btime).getTime();
+        // return bTime - aTime //  默认
+        if (this.num % 2 == 0) {
+          this.dispalytype = 2;
+          // console.log("jiangxu");
+          return aTime - bTime; //日期降序  默认
+        } else {
+          this.dispalytype = 1;
+          // console.log("shengxu");
+          return bTime - aTime; //日期升序
+        }
+      });
+      this.priceAdmin.page = 1;
+      this.getList();
+      this.num++;
+    },
+    Settimechange() {
+      //设置时间升降序
+      let atime, btime;
+      this.priceAdmin.dataMaketPriceList.sort((a, b) => {
+        atime = a.prices.length !== 0 ? a.prices[0].time : 0;
+        btime = b.prices.length !== 0 ? b.prices[0].time : 0;
+        let aTime = new Date(atime).getTime();
+        let bTime = new Date(btime).getTime();
+        if (this.num2 % 2 == 0) {
+          this.dispalytype2 = 2;
+          return bTime - aTime; //
+        } else {
+          this.dispalytype2 = 1;
+          return aTime - bTime; //默认
+        }
+      });
+      this.priceAdmin.page = 1;
+      this.getList();
+      this.num2++;
+    },
+    // 数据条数分页处理
+    getList() {
+      console.log(
+        "默认分页数据----10条/总" + this.priceAdmin.dataMaketPriceList.length
+      );
+      this.list = this.priceAdmin.dataMaketPriceList.filter(
+        (item, index) =>
+          index < this.priceAdmin.page * this.pageNum &&
+          index >= this.pageNum * (this.priceAdmin.page - 1)
+      );
+      if (this.list.length == 0) {
+        this.hintMsg = "啊哦~ 暂无数据";
+      }
+      console.log(this.list);
+    },
+    // 模糊搜索
+    stockInSearch() {
+      console.log("关键字---" + this.priceAdmin.keyword);
+      if (this.priceAdmin.keyword !== "") {
+        console.log(this.priceAdmin.page);
+        this.priceAdmin.dataMaketPriceList = [];
+        this.dataMsg = "数据加载中...";
+        this.$axios
+          .post(this.$store.state.baseUrl + "/DataMaketPriceList", {
+            page: this.priceAdmin.page,
+            pageNum: this.pageNum,
+            keyword: this.priceAdmin.keyword,
+          })
+          .then((res) => {
+            console.log("模糊搜索待售商品");
+            console.log(res);
+            this.priceAdmin.total = res.data.total;
+            this.temporarylist2 = res.data.watchs;
+            this.Conditionalscreening();
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else if (this.priceAdmin.keyword == "") {
+        this.priceAdmin.page = 1;
+        this.priceAdmin.dataMaketPriceList = [];
+        this.handleDataMaketPriceList();
+      }
+    },
+    // 查看详情
+    priceDetails(item) {
+      this.priceDetailsList = item;
+      this.priceAdmin.select = 1;
+      // 页面回到顶部
+      (function smoothscroll() {
+        var currentScroll =
+          document.documentElement.scrollTop || document.body.scrollTop;
+        if (currentScroll > 0) {
+          window.requestAnimationFrame(smoothscroll);
+          window.scrollTo(0, currentScroll - currentScroll / 5);
+        }
+      })();
+    },
+    // 修改手表等级
+    updateWatchLevel(watchid) {
+      this.watchLevel = "1";
+      this.buyWatchId = watchid;
+      console.log(this.buyWatchId);
+      this.dialogWatchLevelVisible = true;
+    },
+    // 确定修改
+    updateWatchLevelSure() {
+      console.log(this.watchLevel);
+      this.$axios
+        .post(this.$store.state.baseUrl + "/DataWatchLevelModify", {
+          id: this.buyWatchId,
+          watchLevel: this.watchLevel,
+        })
+        .then((res) => {
+          console.log("修改手表等级");
+          console.log(res);
+          this.$message.success({
+            message: "修改手表等级成功",
+            showClose: true,
+            duration: 2000,
+          });
+          this.dialogWatchLevelVisible = false;
+          this.priceAdmin.page = 1;
+          if (this.priceAdmin.keyword !== "") {
+            this.stockInSearch();
+          } else {
+            this.handleDataMaketPriceList();
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    // 分页
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+      this.priceAdmin.page = val;
+      console.log(this.priceAdmin.page);
+      if (this.priceAdmin.keyword !== "") {
+        this.stockInSearch();
+      } else {
+        this.getList();
+      }
+      // else if (this.priceAdmin.keyword == "") {
+      //     this.handleDataMaketPriceList();
+
+      // }
+      (function smoothscroll() {
+        var currentScroll =
+          document.documentElement.scrollTop || document.body.scrollTop;
+        if (currentScroll > 0) {
+          window.requestAnimationFrame(smoothscroll);
+          window.scrollTo(0, currentScroll - currentScroll / 5);
+        }
+      })();
+    },
+  },
+};
+</script>
+<style lang="scss" scoped>
+.price-admin-table {
+  width: 90%;
+  margin: 0 auto;
+  padding: 20px 40px;
+  background-color: #fff;
+  border-radius: 30px;
+
+  .img-style {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 30px;
+  }
+
+  th {
+    height: 50px;
+    line-height: 50px;
+    background-color: #d7ebe7;
+  }
+
+  td {
+    height: 60px;
+    margin: 10px 0;
+    padding: 10px 0;
+    background-color: #f3fbf9;
+    font-size: 15px;
+    text-align: center;
+  }
+}
+
+.report-screen {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  width: 90%;
+  margin: 20px auto;
+}
+
+.report-checked {
+  width: 36%;
+  display: flex;
+  justify-content: space-between;
+  color: #000;
+}
+
+.report-sort {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  width: 36%;
+}
+
+.time-sort,
+.price-sort {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-around;
+  font-weight: 16px;
+  font-weight: bold;
+  width: 80px;
+}
+
+.el-icon-d-caret {
+  line-height: 22px;
+  margin-left: 16px;
+}
+
+.red {
+  color: red;
+}
+
+.green {
+  color: #0c8563;
+}
+
+.price-admin-table > table > tr:hover > td {
+  background-color: #d7ebe7 !important;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+
+  tr {
+    th,
+    td {
+      width: 12.5%;
+      text-align: center;
+      border: 0;
+    }
+  }
+}
+</style>

@@ -1,0 +1,48 @@
+{
+  "_from": "vue-qrcode-directive@^1.2.0",
+  "_id": "vue-qrcode-directive@1.2.0",
+  "_inBundle": false,
+  "_integrity": "sha512-3YKbu8rDWQjm2QGhoPT+oBbGgggqL3WOJiJn98uPO09Mjpdr8q4IfbndYLJ6zZ0EqaHqNR1VF2PHGKBTXM+61w==",
+  "_location": "/vue-qrcode-directive",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "vue-qrcode-directive@^1.2.0",
+    "name": "vue-qrcode-directive",
+    "escapedName": "vue-qrcode-directive",
+    "rawSpec": "^1.2.0",
+    "saveSpec": null,
+    "fetchSpec": "^1.2.0"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/vue-qrcode-directive/-/vue-qrcode-directive-1.2.0.tgz",
+  "_shasum": "a228fe1b5f8a70122129be4ec10af12094705982",
+  "_spec": "vue-qrcode-directive@^1.2.0",
+  "_where": "D:\\aa-tong\\upgrade\\up-watches",
+  "author": {
+    "name": "pqs 2945802136@qq.com"
+  },
+  "bugs": {
+    "url": "https://github.com/pengqiangsheng/vue-qrcode-directive/issues"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "A QR code resolver that uses the form of vue instruction",
+  "homepage": "https://github.com/pengqiangsheng/vue-qrcode-directive",
+  "keywords": [
+    "vue-qrcode",
+    "qrcode",
+    "vue"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "name": "vue-qrcode-directive",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pengqiangsheng/vue-qrcode-directive.git"
+  },
+  "version": "1.2.0"
+}

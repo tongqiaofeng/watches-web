@@ -1,0 +1,45 @@
+{
+  "name": "watches",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve --host 192.168.0.119",
+    "build": "vue-cli-service build",
+    "test:unit": "vue-cli-service test:unit",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "awe-dnd": "^0.3.4",
+    "axios": "^0.19.2",
+    "callapp-lib": "^2.1.8",
+    "clipboard": "^2.0.6",
+    "core-js": "^3.6.4",
+    "echarts": "^4.7.0",
+    "element-ui": "^2.13.0",
+    "vue": "^2.6.11",
+    "vue-directive-image-previewer": "^2.2.2",
+    "vue-qr": "^2.2.1",
+    "vue-qrcode-directive": "^1.2.0",
+    "vue-router": "^3.1.5",
+    "vuedraggable": "^2.24.1",
+    "vuex": "^3.1.2"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.2.0",
+    "@vue/cli-plugin-eslint": "~4.2.0",
+    "@vue/cli-plugin-router": "~4.2.0",
+    "@vue/cli-plugin-unit-jest": "~4.2.0",
+    "@vue/cli-plugin-vuex": "~4.2.0",
+    "@vue/cli-service": "~4.2.0",
+    "@vue/eslint-config-prettier": "^6.0.0",
+    "@vue/test-utils": "1.0.0-beta.31",
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.7.2",
+    "eslint-plugin-prettier": "^3.1.1",
+    "eslint-plugin-vue": "^6.1.2",
+    "prettier": "^1.19.1",
+    "sass": "^1.25.0",
+    "sass-loader": "^8.0.2",
+    "vue-template-compiler": "^2.6.11"
+  }
+}

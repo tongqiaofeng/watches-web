@@ -1,0 +1,2315 @@
+<template>
+  <div class="container" id="container-home">
+    <el-container class="container">
+      <!-- min-height:1560px; -->
+      <el-aside class="aside" style="width:324px;height: 100%;position: fixed;left: 0;">
+        <div class="aside-container">
+          <div style="width: 180px;margin: 0 auto;padding-bottom: 10px;border-bottom:1px solid #f1f1f1;">
+            <img src="../../assets/imgs/logo.png" class="logoImg" />
+          </div>
+          <ul class="person-ul">
+            <li class="first-li"
+              v-show="authorityList[0] == 1 || authorityList[1] == 1 || authorityList[2] == 1 || authorityList[3] == 1 || authorityList[9] == 1 || authorityList[10] == 1 || authorityList[11] == 1">
+              <div @click="closeAndOpen1"
+                style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
+                <div style="display: flex;">
+                  <img class="icon icon-size" src="../../assets/imgs/msg-search.png" />
+                  <p class="icon" style="color:#fff;margin: 0;">实用信息查询</p>
+                </div>
+                <i id="arrows" class="el-icon-arrow-up"></i>
+              </div>
+              <ul id="openOrClose" class="open">
+                <li v-show="authorityList[0] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 10 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;color: #0c7063;"
+                    :style="{color: selected == 10 ? '#0c7063' : '#fff'}" @click="selected10">
+                    手表查询</p>
+                </li>
+                <li v-show="authorityList[1] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 9 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color: selected == 9 ? '#0c7063' : '#fff'}" @click="selected9">
+                    店铺查询</p>
+                </li>
+                <li v-show="authorityList[9] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 6 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color: selected == 6 ? '#0c7063' : '#fff'}" @click="selected6">
+                    贸易商管理</p>
+                </li>
+                <li v-show="authorityList[10] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (marketSelect == 4 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color: marketSelect == 4 ? '#0c7063' : '#fff'}" @click="marketSelect6">
+                    客户管理</p>
+                </li>
+                <li v-show="authorityList[2] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 11 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color: selected == 11 ? '#0c7063' : '#fff'}" @click="selected11">
+                    汇率查询</p>
+                </li>
+                <li v-show="authorityList[11] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 7 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <div style="display: flex;">
+                    <span class="icon" style="margin-right: 0;" :style="{color: selected == 7 ? '#0c7063' : '#fff'}"
+                      @click="selected7">批发价管理</span>
+                    <p v-show="dataMaketPriceCount > 0" class="selected-circle-style">
+                    </p>
+                  </div>
+                </li>
+                <li v-show="authorityList[3] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 8 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color: selected == 8 ? '#0c7063' : '#fff'}" @click="selected8">
+                    批发价查询</p>
+                </li>
+                <!-- <li class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 5 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"  :style="{color: selected == 5 ? '#0c7063' : '#fff'}"  @click="selected5">结算单
+                  </p>
+                </li> -->
+              </ul>
+            </li>
+            <li class="first-li"
+              v-show="authorityList[12] == 1 || authorityList[13] == 1 || authorityList[14] == 1 || authorityList[4] == 1 ">
+              <div @click="closeAndOpen2"
+                style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
+                <div style="display: flex;">
+                  <img class="icon icon-size" src="../../assets/imgs/cargo.png" />
+                  <p class="icon" style="color:#fff;margin: 0;">采购货物管理</p>
+                </div>
+                <i id="arrows2" class="el-icon-arrow-down"></i>
+              </div>
+              <ul id="openOrClose2" class="close">
+                <li v-show="authorityList[12] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 1 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color: selected == 1 ? '#0c7063' : '#fff'}" @click="selected1($event)">代理商采购</p>
+                </li>
+                <li v-show="authorityList[13] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 3 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color: selected == 3 ? '#0c7063' : '#fff'}" @click="selected3">贸易商采购</p>
+                </li>
+                <li v-show="authorityList[14] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 2 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color: selected == 2 ? '#0c7063' : '#fff'}" @click="closeAndOpen">我的采购</p>
+                </li>
+                <li v-show="authorityList[4] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 4 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color: selected == 4 ? '#0c7063' : '#fff'}" @click="selected4">物流查询</p>
+                </li>
+              </ul>
+            </li>
+            <li class="first-li" v-show="authorityList[15] == 1 || authorityList[16] == 1 || authorityList[17] == 1">
+              <div @click="closeAndOpen3"
+                style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
+                <div style="display: flex;">
+                  <img class="icon icon-size" src="../../assets/imgs/capital.png" />
+                  <p class="icon" style="color:#fff;margin: 0;">采购资金管理</p>
+                </div>
+                <i id="arrows3" class="el-icon-arrow-down"></i>
+              </div>
+              <ul id="openOrClose3" class="close">
+                <li v-show="authorityList[16] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 14 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color: selected == 14 ? '#0c7063' : '#fff'}" @click="selected14">税金管理
+                  </p>
+                </li>
+                <li v-show="authorityList[15] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 15 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color: selected == 15 ? '#0c7063' : '#fff'}" @click="selected15">
+                    佣金管理</p>
+                </li>
+                <li v-show="authorityList[17] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 16 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color: selected == 16 ? '#0c7063' : '#fff'}" @click="selected16">
+                    小费管理</p>
+                </li>
+              </ul>
+            </li>
+            <li class="first-li" v-show="authorityList[19] == 1 || authorityList[20] == 1 || authorityList[21] == 1">
+              <div @click="warehouseCloseAndOpen2"
+                style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
+                <div style="display: flex;">
+                  <img class="icon icon-size" src="../../assets/imgs/admin1.png" />
+                  <p class="icon" style="color:#fff;margin: 0;">仓库货物管理</p>
+                </div>
+                <i id="warehouseArrows2" class="el-icon-arrow-down"></i>
+              </div>
+              <ul id="warehouseOpenOrClose2" class="close">
+                <li v-show="authorityList[19] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (warehouseSelect == 0 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <div style="display: flex;" @click="select1($event)">
+                    <span class="icon" style="margin-right: 0;color:#2e4d65;"
+                      :style="{color:warehouseSelect == 0 ? '#0c7063' : '#fff'}">待入库</span>
+                    <p v-show="stockInCount !== 0" class="selected-circle-style"></p>
+                  </div>
+                </li>
+                <li v-show="authorityList[20] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (warehouseSelect == 2 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;" @click="select4"
+                    :style="{color:warehouseSelect == 2 ? '#0c7063' : '#fff'}">未出库
+                  </p>
+                </li>
+                <li v-show="authorityList[20] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (warehouseSelect == 3 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;" @click="select5"
+                    :style="{color:warehouseSelect == 3 ? '#0c7063' : '#fff'}">
+                    已出库
+                  </p>
+                </li>
+                <li v-show="authorityList[21] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (warehouseSelect == 4 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="icon" style="margin: 0;text-align: left;"
+                    :style="{color:warehouseSelect == 4 ? '#0c7063' : '#fff'}" @click="select6">出库/查询</p>
+                </li>
+              </ul>
+            </li>
+            <li class="first-li" v-show="authorityList[22] == 1 || authorityList[23] == 1 || authorityList[24] == 1 ">
+              <div @click="marketCloseAndOpen2"
+                style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
+                <div style="display: flex;">
+                  <img class="icon icon-size" src="../../assets/imgs/admin2.png" />
+                  <p class="icon" style="color:#fff;margin: 0;">销售货物管理</p>
+                </div>
+                <i id="marketArrows2" class="el-icon-arrow-down"></i>
+              </div>
+              <ul id="marketOpenOrClose2" class="close">
+                <li v-show="authorityList[22] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (marketSelect == 0 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="icon" style="margin: 0;text-align: left;"
+                    :style="{color:marketSelect == 0 ? '#0c7063' : '#fff'}" @click="marketSelect1">库存
+                  </p>
+                </li>
+                <li v-show="authorityList[23] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (marketSelect == 2 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <div style="display: flex;" @click="marketSelect4">
+                    <span class="icon" style="margin-right: 0;"
+                      :style="{color:marketSelect == 2 ? '#0c7063' : '#fff'}">进行中销售</span>
+                    <p v-show="sellPendOrderCount !== 0" class="selected-circle-style"></p>
+                  </div>
+                </li>
+                <li v-show="authorityList[24] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (marketSelect == 3 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="icon" style="margin: 0;text-align: left;"
+                    :style="{color:marketSelect == 3 ? '#0c7063' : '#fff'}" @click="marketSelect5">已完成销售
+                  </p>
+                </li>
+              </ul>
+            </li>
+            <li class="first-li" v-show="authorityList[5] == 1 || authorityList[25] == 1 || authorityList[27] == 1">
+              <div @click="closeAndOpen4"
+                style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
+                <div style="display: flex;">
+                  <img class="icon icon-size" src="../../assets/imgs/work.png" />
+                  <p class="icon" style="color:#fff;margin: 0;">企业在线办公</p>
+                </div>
+                <i id="arrows4" class="el-icon-arrow-down"></i>
+              </div>
+              <ul id="openOrClose4" class="close">
+                <li v-show="authorityList[5] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 12 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color:selected == 12 ? '#0c7063' : '#fff'}" @click="selected12">我的报销</p>
+                </li>
+                <li v-show="authorityList[25] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 13 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <div style="display: flex;">
+                    <span class="icon" style="margin-right: 0;" :style="{color:selected == 13 ? '#0c7063' : '#fff'}"
+                      @click="selected13">报销管理</span>
+                    <p v-show="reimData == 1" class="selected-circle-style"></p>
+                  </div>
+                </li>
+                <li v-show="authorityList[27] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 17 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color:selected == 17 ? '#0c7063' : '#fff'}" @click="selected17">银行卡管理</p>
+                </li>
+                <li v-show="authorityList[27] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 18 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color:selected == 18 ? '#0c7063' : '#fff'}" @click="selected18">我的借贷</p>
+                </li>
+                <li v-show="authorityList[28] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 19 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color:selected == 19 ? '#0c7063' : '#fff'}" @click="selected19">借贷审核</p>
+                </li>
+                <li v-show="authorityList[29] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 20 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color:selected == 20 ? '#0c7063' : '#fff'}" @click="selected20">借贷拨款</p>
+                </li>
+                <li v-show="authorityList[30] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 21 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color:selected == 21 ? '#0c7063' : '#fff'}" @click="selected21">债务统计-个人</p>
+                </li>
+                <li v-show="authorityList[31] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 22 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color:selected == 22 ? '#0c7063' : '#fff'}" @click="selected22">债务统计-公司</p>
+                </li>
+              </ul>
+            </li>
+
+            <li class="first-li" v-show="authorityList[33] == 1||authorityList[34] == 1||authorityList[37] == 1">
+              <div @click="closeAndOpen5"
+                style="width: 100%;display: flex;justify-content: space-between;line-height:20px;">
+                <div style="display: flex;">
+                  <img class="icon icon-size" src="../../assets/imgs/work.png" />
+                  <p class="icon" style="color:#fff;margin: 0;">统计报表</p>
+                </div>
+                <i id="arrows5" class="el-icon-arrow-down"></i>
+              </div>
+              <ul id="openOrClose5" class="close">
+                <li v-show="authorityList[33] == 1" class="li-selected-background"
+                  :style="{backgroundImage: 'url(' + (selected == 23 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                  <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                    :style="{color: selected == 23 ? '#0c7063' : '#fff'}" @click="selected23">采购报表</p>
+                </li>
+                <li v-show="authorityList[34] == 1" class="li-selected-background"
+                :style="{backgroundImage: 'url(' + (selected == 24 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+                <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                  :style="{color: selected == 24 ? '#0c7063' : '#fff'}" @click="selected24">销售报表</p>
+              </li>
+              <li v-show="authorityList[37] == 1" class="li-selected-background"
+              :style="{backgroundImage: 'url(' + (selected == 25 ? coverImgUrl : baseImg) + ')', backgroundSize:'contain'}">
+              <p class="my-purchase icon" style="margin: 0;text-align: left;"
+                :style="{color: selected == 25 ? '#0c7063' : '#fff'}" @click="selected25">仓库报表</p>
+            </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </el-aside>
+      <el-main class="main" style="margin-left:324px;">
+        <el-backtop>
+          <img src="../../assets/imgs/top.png" class="radius" />
+        </el-backtop>
+        <el-col :span="24" class="main-top">
+          <el-row>
+            <div class="main-top-right">
+              <div style="display: flex;">
+                <div style="display: flex;" v-show="isSearch == 0">
+                  <el-input :placeholder="promptMessage" prefix-icon="el-icon-search"
+                    style="width: 400px;margin-right: 20px;" v-model="fuzzyKeyword" @focus="pageSel"
+                    @blur="keywordSure"></el-input>
+                  <button type="primary" class="top-search-button" @click="fuzzySearch">查
+                    询</button>
+                </div>
+                <div class="right-div" @click="updateUserClick">
+                  <span class="span1">Hi，{{this.$store.state.nick}}</span>
+                  <div>
+                    <img src="../../assets/imgs/down.png" style="width: 15px;margin-left: 20px;" />
+                  </div>
+                </div>
+                <div class="cut-off-rule"></div>
+                <div @click="logOut" class="loginoutDiv">
+                  <div style="margin-top: 3px;">
+                    <img src="../../assets/imgs/logOut.png" style="width: 20px;height: 20px;" />
+                  </div>
+                  <span class="loginout">退出登录</span>
+                </div>
+              </div>
+              <div class="downbtn" v-if="updateUser==0">
+                <ul class="updateUl">
+                  <li class="updateLi1">
+                    <div class="updateP" @click="nickUpdate">
+                      <div class="nick-img">
+                        <div class="update-nick-img" style="display: flex;">
+                          <div style="margin-top: 3px;">
+                            <img src="../../assets/imgs/update-nick.png" style="width: 17px;height: 20px;" />
+                          </div>
+                          <span>修改昵称</span>
+                        </div>
+                      </div>
+                    </div>
+                    <el-dialog title="修改昵称" :visible.sync="nickDialogVisible" :append-to-body="true"
+                      :close-on-press-escape="false" :close-on-click-modal="false" width="40%" center>
+                      <div style="width:100%;padding-left:5%;display:flex;">
+                        <p style="margin-right:15px;">新昵称：</p>
+                        <input class="update-nick"
+                          style="width: 70%;padding-left: 20px;border-radius: 30px;border: 1px solid #ddd;outline: none;"
+                          type="text" v-model="newNick" placeholder="请输入新昵称" />
+                      </div>
+                      <span slot="footer" class="dialog-footer">
+                        <el-button @click="nickDialogVisible = false" style="margin-left: 35%;">取 消</el-button>
+                        <el-button type="primary" @click="updateNick" v-preventClick>确 定</el-button>
+                      </span>
+                    </el-dialog>
+                  </li>
+                  <li class="updateLi1">
+                    <div class="updateP" @click="pswUpdate">
+                      <div class="psw-img">
+                        <div class="update-nick-img" style="display: flex;">
+                          <div style="margin-top: 3px;">
+                            <img src="../../assets/imgs/update-psw.png" style="width: 17px;height: 20px;" />
+                          </div>
+                          <span>修改密码</span>
+                        </div>
+                      </div>
+                    </div>
+                    <el-dialog title="修改密码" :visible.sync="pswDialogVisible" :append-to-body="true"
+                      :close-on-press-escape="false" :close-on-click-modal="false" width="40%" center>
+                      <div style="width:100%;padding-left:5%;display:flex;">
+                        <p style="margin-right:15px;">旧密码：</p>
+                        <input class="update-nick"
+                          style="width: 70%;padding-left: 20px;border-radius: 30px;border: 1px solid #ddd;outline: none;"
+                          type="text" v-model="oldPsw" placeholder="请输入旧密码" />
+                      </div>
+                      <div style="width:100%;padding-left:5%;margin-top:15px;display:flex;">
+                        <p style="margin-right:15px;">新密码：</p>
+                        <input class="update-nick"
+                          style="width: 70%;padding-left: 20px;border-radius: 30px;border: 1px solid #ddd;outline: none;"
+                          type="text" v-model="newPsw" placeholder="请输入新密码" />
+                      </div>
+                      <span slot="footer" class="dialog-footer">
+                        <el-button @click="pswDialogVisible = false" style="margin-left: 35%;">取 消</el-button>
+                        <el-button type="primary" @click="updatePsw" v-preventClick>确 定</el-button>
+                      </span>
+                    </el-dialog>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </el-row>
+        </el-col>
+        <el-col :span="24" class="main-container">
+          <div>
+            <!-- 代理商采购 -->
+            <Purchase v-if="selected == 1" :purchaseSelect="purchaseSelect" :purchasePro="purchasePro"></Purchase>
+            <!-- 贸易商采购 -->
+            <Peer v-if="selected == 3" :purchaseSelect="purchaseSelect"></Peer>
+            <!-- 我的采购 -->
+            <My-purchase ref="myPurchase" v-if="selected == 2" :selectSearch="selectSearch" :numSelect="numSelect"
+              @radioSel="radioSel">
+            </My-purchase>
+            <!-- 物流 -->
+            <Logistics-view v-if="selected == 4" :logisticsView="logisticsView"></Logistics-view>
+            <!-- 结算单 -->
+            <Statement v-if="selected == 5"></Statement>
+            <!-- 税金管理 -->
+            <Taxes-admin v-if="selected == 14" :taxesSel="taxesSel"></Taxes-admin>
+            <!-- 佣金管理 -->
+            <Commission-admin v-if="selected == 15" :commissionSel="commissionSel"></Commission-admin>
+            <!-- 小费管理 -->
+            <Tip-admin v-if="selected == 16" :tipSel="tipSel" @rateCalcJump="rateCalcJump" :jumpToRate="jumpToRate"></Tip-admin>
+            <!-- 贸易商/客户管理 -->
+            <Peer-admin ref="peerAdminMain" v-if="selected == 6 || marketSelect == 4" @peerSel="peerSel">
+            </Peer-admin>
+            <!-- 批发价管理 -->
+            <Price-admin ref="priceAdminMain" v-if="selected == 7" :priceAdmin="priceAdmin" @priceCount="priceCount":key="priceadminnum">
+            </Price-admin>
+            <!-- 批发价查询 -->
+            <Price-inquire ref="priceInquireMain" v-if="selected == 8" :priceInquire="priceInquire" :key="pricenum">
+            </Price-inquire>
+            <!-- 店铺查询 -->
+            <Store-query ref="storeQueryMain" v-if="selected == 9" @storeJump="storeJump"
+              :storeQuerySel="storeQuerySel"></Store-query>
+            <!-- 手表查询 -->
+            <Watch-query ref="watchQueryMain" v-if="selected == 10" :watchQuerySel="watchQuerySel" :notoqyeryval=notoqyeryval @nottoquery="nottoquery" :key="watchQuerynum"></Watch-query>
+            <!-- 汇率查询 -->
+            <Rate-query v-if="selected == 11" :rateQuerySel="rateQuerySel" :key="ratequerynum"  @jumptorate="jumptorate" >
+            </Rate-query>
+            <!-- 我的报销 -->
+            <Reimbursement ref="reimbursementMain" v-if="selected == 12" :reimbursementSel="reimbursementSel" :jumpToRate="jumpToRate"
+              @jumpRate="jumpRate" @reimListen="reimListen" @tabSelect="tabSelect">
+            </Reimbursement>
+            <!-- 报销管理 -->
+            <Reimbursement-admin ref="reimburseAdmin" v-if="selected == 13" :jumpToRate="jumpToRate"
+              :reimbursementAdminSel="reimbursementAdminSel" @rateCalcJump="rateCalcJump" @reimListen="reimListen"
+              @reimbursementKeyword="reimbursementKeyword" @deleteReco="deleteReco">
+            </Reimbursement-admin>
+            <!-- 银行卡管理 -->
+            <Bank-statement v-if="selected == 17"></Bank-statement>
+            <!-- 我的借贷 -->
+            <My-borrow ref="myBorrow" v-if="selected == 18" :myBorrowSelect="myBorrowSelect"></My-borrow>
+            <!-- 借贷审核 -->
+            <Borrow-audit ref="borrowingAudit" v-if="selected == 19"></Borrow-audit>
+            <!-- 借贷拨款 -->
+            <Appropriation ref="appropriation" v-if="selected == 20"></Appropriation>
+            <!-- 债务统计-个人 -->
+            <Debt-statistics-person ref="debtPerson" v-if="selected == 21" :debtPersonSelect="debtPersonSelect">
+            </Debt-statistics-person>
+            <!-- 债务统计-公司 -->
+            <Debt-statistics-company ref="debtCompany" v-if="selected == 22" :debtCompanySelect="debtCompanySelect">
+            </Debt-statistics-company>
+            <!-- 待入库 -->
+            <Stock-list ref="stockListMain" v-if="warehouseSelect == 0" :stock1="stock1" @getStockCount="getStockCount">
+            </Stock-list>
+            <!-- 未出库 -->
+            <Not-outbound ref="notOutboundMain" v-if="warehouseSelect == 2" :notOutbound="notOutbound" @nottoquery="nottoquery":notoqyeryval="notoqyeryval"
+              :notOrders="notOrders" @notKeywordChan="notKeywordChan"></Not-outbound>
+            <!-- 已出库 -->
+            <Have-outbound ref="haveOutboundMain" v-if="warehouseSelect == 3" :haveBound="haveBound"></Have-outbound>
+            <!-- 出库/查询 -->
+            <Outbound-query v-if="warehouseSelect == 4" :outboundQuery="outboundQuery"></Outbound-query>
+            <!-- 待售 -->
+            <For-sale ref="forsaleMain" v-if="marketSelect == 0" :forSale="forSale"  @nottoquery="nottoquery":notoqyeryval="notoqyeryval"></For-sale>
+            <!-- 在售 -->
+            <On-sale ref="onsaleMain" v-if="marketSelect == 2" :onSaleSel="onSaleSel"
+              @getSellPendOrderCount="getSellPendOrderCount">
+            </On-sale>
+            <!-- 已完成销售 -->
+            <Completed-sale ref="completedSaleMain" v-if="marketSelect == 3"></Completed-sale>
+            <!--采购报表-->
+            <Purchase-reports v-if="selected== 23" :againclick="againclick" :key="timer"></Purchase-reports>
+            <!--销售报表-->
+            <Sale-reports v-if="selected== 24" :againclick="againclick" :key="timer"></Sale-reports>
+            <!--仓库报表-->
+            <Warehouse-reports v-if="selected== 25" :againclick="againclick" :key="timer"></Warehouse-reports>
+          </div>
+        </el-col>
+      </el-main>
+    </el-container>
+  </div>
+</template>
+<script>
+    export default {
+        inject: ['reload'],
+        data() {
+            return {
+                coverImgUrl: require('../../assets/imgs/selected.png'),
+                baseImg: '',
+                stockInCount: 0,
+                sellPendOrderCount: 0,
+                isRouterAlive: true,
+                selected: 10,
+                breadList: [],
+                actives: "1-1",
+                updateUser: 1,
+                nickDialogVisible: false,
+                dialogVisible: false,
+                newNick: "",
+                pswDialogVisible: false,
+                oldPsw: "",
+                newPsw: "",
+                selectSearch: {
+                    id: 1,
+                    msg: 0,
+                    keyword: ''
+                },
+                logisticsView: {
+                    id: 1,
+                    logisticsV: 0
+                },
+
+                warehouseSelect: 10,
+                stock1: {
+                    id: 1,
+                    num: 0
+                },
+                purchaseSelect: {
+                    id: 1,
+                    nums: 0
+                },
+                notOutbound: {
+                    id: 1,
+                    nots: 0,
+                    select: 0,
+                },
+                notOrders: {
+                    notOutboundList1: [],
+                    total1: 0,
+                    totalNum1: 0
+                },
+                haveBound: {
+                    id: 1,
+                    have: 0
+                },
+                marketSelect: 10,
+
+                forSale: {
+                    id: 1,
+                    sale: 0
+                },
+                outboundQuery: {
+                    id: 1,
+                    query: 0,
+                    msg: '',
+                },
+
+                numSelect: {
+                    id: 0,
+                    select: 0
+                },
+                priceAdmin: {
+                    id: 0,
+                    select: 0,
+                    page: 1,
+                    total: 0,
+                    dataMaketPriceList: [],
+                    keyword: ''
+                },
+                priceInquire: {
+                    id: 0,
+                    select: 0
+                },
+                dataMaketPriceCount: 0,
+                isFirst: false,
+                purchasePro: {},
+                storeQuerySel: {
+                    id: 0,
+                    select: 0
+                },
+                watchQuerySel: {
+                    id: 0,
+                    select: 0,
+                    valid: 0
+                },
+                rateQuerySel: {
+                    id: 0,
+                    select: 0,
+                    time: "",
+                    page: 0,
+                    val: "",
+                },
+                reimbursementSel: {
+                    id: 0,
+                    select: 0
+                },
+                reimbursementAdminSel: {
+                    id: 0,
+                    select: 0,
+                    // toConfirmedSel: 0
+                },
+                commissionSel: {
+                    select: 0
+                },
+                taxesSel: {
+                    select: 0
+                },
+                tipSel: {
+                    select: 0
+                },
+                reimData: 0,
+                onSaleSel: {
+                    select: 0
+                },
+
+                promptMessage: '可输入手表品牌、系列、型号、昵称简称进行搜索',
+                fuzzyKeyword: '',
+                isSearch: 0,
+                authorityList: [],
+
+                myBorrowSelect: {
+                    select: 0,
+                },
+
+                debtPersonSelect: {
+                    select: 0
+                },
+                debtCompanySelect: {
+                    select: 0
+                },
+                againclick: {
+                    times: 0
+                },
+                timer: '',
+                jumpToRate: {
+                    selectval: ''
+                },
+                notoqyeryval: {
+                    num: '',
+                    val: 0,
+                    backval: 0,
+                    page: ''
+                },
+                pricenum: 0,
+                ratequerynum: 0,
+                priceadminnum: 0,
+                watchQuerynum: 0
+            };
+        },
+        created() {
+            this.authorityList = sessionStorage.getItem('authority').split('|');
+            console.log(this.authorityList);
+            this.$store.state.nick = sessionStorage.getItem("nick");
+            this.getBreadList();
+        },
+        mounted() {
+            //防止页面后退
+            this.keydown();
+
+            this.$axios.post(this.$store.state.baseUrl + '/StockInCount').then((res) => {
+                this.stockInCount = res.data.count;
+            });
+            this.$axios.post(this.$store.state.baseUrl + '/SellPendOrderCount').then((res) => {
+                this.sellPendOrderCount = res.data.count;
+            });
+            this.$axios.post(this.$store.state.baseUrl + "/DataMaketPriceCount").then((res) => {
+                console.log(res.data.total);
+                this.dataMaketPriceCount = res.data.total;
+            });
+
+            let openOrClose = document.getElementById('openOrClose');
+            let arrows = document.getElementById('arrows');
+            let openOrClose2 = document.getElementById('openOrClose2');
+            let arrows2 = document.getElementById('arrows2');
+            let openOrClose3 = document.getElementById('openOrClose3');
+            let arrows3 = document.getElementById('arrows3');
+            let openOrClose4 = document.getElementById('openOrClose4');
+            let arrows4 = document.getElementById('arrows4');
+            let openOrClose5 = document.getElementById('openOrClose5');
+            let arrows5 = document.getElementById('arrows5');
+            let warehouseArrows2 = document.getElementById('warehouseArrows2');
+            let warehouseOpenOrClose2 = document.getElementById('warehouseOpenOrClose2');
+            let marketArrows2 = document.getElementById('marketArrows2');
+            let marketOpenOrClose2 = document.getElementById('marketOpenOrClose2');
+        },
+        methods: {
+            deleteReco() {
+                this.jumpToRate.selectval = ''; //报销管理页面---再次点击查询不显示之前的页面（重新执行）
+            },
+            nottoquery(num, val, backto, page) {
+                console.log(num + "---" + val + "==" + backto);
+                this.notoqyeryval.num = num;
+                this.notoqyeryval.page = page;
+                if (backto == 1) {
+                    this.notoqyeryval.backval = backto;
+                    this.warehouseCloseAndOpen2();
+                    this.select4two();
+                    console.log(backto);
+                } else if (backto == 2) {
+                    this.notoqyeryval.backval = backto;
+                    this.marketCloseAndOpen2();
+                    this.marketSelect1two();
+                    console.log(backto);
+                } else {
+                    this.notoqyeryval.val = val;
+                    this.closeAndOpen1two()
+                }
+
+            },
+            // 手表查询
+            selected10() {
+                this.selected = 10;
+                this.marketSelect = 10;
+                this.warehouseSelect = 10;
+                this.watchQuerySel.select = 0;
+                this.notoqyeryval.num = 0;
+                this.watchQuerynum += 1;
+                // console.log(this.watchQuerySel.select);
+                this.isSearch = 0;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '可输入手表品牌、系列、型号、昵称简称进行搜索';
+                this.backTop();
+                if (this.notoqyeryval.num == "") {
+                    this.reload(); //手表查询正常流程--数据重置
+                }
+            },
+            selected210() {
+                this.selected = 10;
+                this.marketSelect = 10;
+                this.warehouseSelect = 10;
+                this.watchQuerySel.select = 0;
+                this.watchQuerynum += 1;
+                // console.log(this.watchQuerySel.select);
+                this.isSearch = 0;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '可输入手表品牌、系列、型号、昵称简称进行搜索';
+                this.backTop();
+                if (this.notoqyeryval.num == "") {
+                    this.reload(); //手表查询正常流程--数据重置
+                }
+            },
+            // 店铺查询
+            selected9() {
+                this.selected = 9;
+                this.marketSelect = 10;
+                this.warehouseSelect = 10;
+                this.isSearch = 0;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '可输入店铺名称、地址、国家等信息进行搜索';
+                this.storeQuerySel.select = 0;
+                this.backTop();
+            },
+            // 贸易商管理
+            selected6() {
+                this.selected = 6;
+                this.marketSelect = 10;
+                this.warehouseSelect = 10;
+                this.isSearch = 0;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '可输入贸易商名称进行搜索';
+                this.backTop();
+            },
+            // 客户管理
+            marketSelect6() {
+                this.marketSelect = 4;
+                this.warehouseSelect = 10;
+                this.selected = 50;
+                this.isSearch = 0;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '可输入贸易商名称进行搜索';
+                this.backTop();
+            },
+            // 汇率查询
+            selected11() {
+                this.selected = 11;
+                this.marketSelect = 10;
+                this.warehouseSelect = 10;
+                this.rateQuerySel.select = 0;
+                // this.rateQuerySel.page = 0;
+                this.isSearch = 1;
+                this.rateQuerySel.time = '';
+                this.fuzzyKeyword = '';
+                this.promptMessage = '';
+                console.log(this.$refs.rateQuery);
+                this.ratequerynum += 1;
+                this.backTop();
+            },
+            returnselected11() {
+                this.selected = 11;
+                this.marketSelect = 10;
+                this.warehouseSelect = 10;
+                this.rateQuerySel.select = 0;
+                this.isSearch = 1;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '';
+                console.log(this.$refs.rateQuery);
+                this.timer = new Date().getTime()
+                this.backTop();
+            },
+            // 批发价管理
+            selected7() {
+                this.selected = 7;
+                this.marketSelect = 10;
+                this.warehouseSelect = 10;
+                this.isSearch = 0;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '可输入品牌、型号进行搜索';
+                this.priceAdmin.select = 0;
+                this.priceAdmin.keyword = '';
+                this.priceAdmin.page = 1;
+                this.$axios.post(this.$store.state.baseUrl + "/DataMaketPriceCount").then((res) => {
+                    this.dataMaketPriceCount = res.data.total;
+                });
+                if (this.isFirst == false) {
+                    this.isFirst = true;
+                } else if (this.isFirst == true) {
+                    this.$axios.post(this.$store.state.baseUrl + '/DataMaketPriceList', {
+                        page: this.priceAdmin.page,
+                        pageNum: 10
+                    }).then((res) => {
+                        this.priceAdmin.total = res.data.total;
+                        this.priceAdmin.dataMaketPriceList = res.data.watchs;
+                    }).catch((err) => {
+                        console.log(err);
+                    })
+                };
+                this.priceadminnum += 1;
+                this.backTop();
+            },
+            // 批发价查询
+            selected8() {
+                this.selected = 8;
+                this.marketSelect = 10;
+                this.warehouseSelect = 10;
+                this.priceInquire.select = 0;
+                this.isSearch = 0;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '可输入品牌、型号进行搜索';
+                this.backTop();
+                this.pricenum += 1;
+            },
+            // 代理商采购
+            selected1() {
+                this.selected = 1;
+                this.marketSelect = 10;
+                this.warehouseSelect = 10;
+                this.purchaseSelect.nums = 0;
+                this.isSearch = 1;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '';
+                this.backTop();
+            },
+            // 贸易商采购
+            selected3() {
+                this.selected = 3;
+                this.marketSelect = 10;
+                this.warehouseSelect = 10;
+                this.isSearch = 1;
+                this.purchaseSelect.nums = 0;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '';
+                this.backTop();
+            },
+            // 我的采购
+            closeAndOpen() {
+                console.log("5555");
+                this.selected = 2;
+                this.marketSelect = 10;
+                this.warehouseSelect = 10;
+                this.isSearch = 0;
+                this.selectSearch.msg = 0;
+                this.numSelect.select = 2;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '可输入品牌、型号、机芯号进行搜索';
+                console.log('选择');
+                console.log(this.numSelect.select);
+
+                this.backTop();
+
+                this.$nextTick(() => {
+                    console.log(this.$refs.myPurchase);
+                    this.$refs.myPurchase.shipping.msg = 0;
+                    this.$refs.myPurchase.filtrate = '0';
+                    this.$refs.myPurchase.radioChange();
+                })
+            },
+            // 物流查询
+            selected4() {
+                this.selected = 4;
+                this.marketSelect = 10;
+                this.warehouseSelect = 10;
+                this.isSearch = 1;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '';
+                this.logisticsView.logisticsV = 1;
+                this.backTop();
+            },
+            // 采购结算单
+            selected5() {
+                this.selected = 5;
+                this.marketSelect = 10;
+                this.warehouseSelect = 10;
+                this.isSearch = 1;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '';
+                this.backTop();
+            },
+            // 税金管理
+            selected14() {
+                this.selected = 14;
+                this.marketSelect = 10;
+                this.warehouseSelect = 10;
+                this.taxesSel.select = 0;
+                this.isSearch = 1;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '';
+                this.backTop();
+            },
+            // 佣金管理
+            selected15() {
+                this.selected = 15;
+                this.marketSelect = 10;
+                this.warehouseSelect = 10;
+                this.isSearch = 1;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '';
+                this.commissionSel.select = 0;
+                this.backTop();
+            },
+            // 小费管理
+            selected16() {
+                this.selected = 16;
+                this.marketSelect = 10;
+                this.warehouseSelect = 10;
+                this.isSearch = 1;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '';
+                this.tipSel.select = 0;
+                this.backTop();
+            },
+            // 银行卡管理
+            selected17() {
+                this.selected = 17;
+                this.marketSelect = 10;
+                this.warehouseSelect = 10;
+                this.isSearch = 1;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '';
+
+                this.backTop();
+            },
+            // 我的借贷
+            selected18() {
+                this.selected = 18;
+                this.marketSelect = 10;
+                this.warehouseSelect = 10;
+                this.isSearch = 1;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '';
+                this.myBorrowSelect.select = 0;
+
+                this.backTop();
+
+                this.$nextTick(() => {
+                    this.$refs.myBorrow.addBorrowListActiveName = 'backlog';
+                    this.$refs.myBorrow.unHandleSelect.select = 0;
+                })
+            },
+            // 借贷审核
+            selected19() {
+                this.selected = 19;
+                this.marketSelect = 10;
+                this.warehouseSelect = 10;
+                this.isSearch = 1;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '';
+
+                this.backTop();
+
+                this.$nextTick(() => {
+                    this.$refs.borrowingAudit.borrowingActiveName = 'borrowingBacklog';
+                })
+            },
+            // 借贷拨款
+            selected20() {
+                this.selected = 20;
+                this.marketSelect = 10;
+                this.warehouseSelect = 10;
+                this.isSearch = 1;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '';
+
+                this.backTop();
+
+                this.$nextTick(() => {
+                    this.$refs.appropriation.appropriationActiveName = 'appropriationBacklog';
+                    this.$refs.appropriation.appropriationUnHandleSelect.select = 0;
+                })
+            },
+            // 债务统计-个人
+            selected21() {
+                this.selected = 21;
+                this.debtPersonSelect.select = 0;
+                this.marketSelect = 10;
+                this.warehouseSelect = 10;
+                this.isSearch = 1;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '';
+                this.backTop();
+            },
+
+            // 债务统计-公司
+            selected22() {
+                this.selected = 22;
+                this.debtCompanySelect.select = 0;
+                this.marketSelect = 10;
+                this.warehouseSelect = 10;
+                this.isSearch = 1;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '';
+                this.backTop();
+            },
+            // 仓库
+            // 待入库
+            select1() {
+                this.warehouseSelect = 0;
+                this.marketSelect = 10;
+                this.selected = 50;
+                this.stock1.num = 0;
+                this.isSearch = 0;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '可输入机芯号进行搜索';
+                this.backTop();
+            },
+            // 库存
+            select3(e) {
+                console.log(e);
+                this.warehouseSelect = 2;
+                this.marketSelect = 10;
+                this.selected = 50;
+                this.stockLine = 2;
+                this.isSearch = 0;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '可输入品牌型号进行搜索';
+                this.backTop();
+            },
+            // 未出库
+            select4() {
+                this.warehouseSelect = 2;
+                this.marketSelect = 10;
+                this.selected = 50;
+                this.notOutbound.nots = 0;
+                this.notOutbound.select = 2;
+                this.isSearch = 0;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '可输入品牌型号进行搜索';
+                if (this.notoqyeryval.backval == 1) {
+                    this.notoqyeryval.backval = 0
+                }
+                console.log(this.notoqyeryval.backval + "0000kkkk");
+                this.$axios
+                    .post(this.$store.state.baseUrl + "/StockList", {
+                        page: 1,
+                        pageNum: 10,
+                        type: '0',
+                    })
+                    .then(res => {
+                        console.log("未出库商品列表");
+                        console.log(res);
+                        this.notOrders.notOutboundList1 = res.data.lst;
+                        this.notOrders.total1 = res.data.total;
+                        this.notOrders.totalNum1 = res.data.watchTotal;
+                        console.log(this.notOrders.notOutboundList1);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+                this.backTop();
+            },
+            select4two() {
+                this.warehouseSelect = 2;
+                this.marketSelect = 10;
+                this.selected = 50;
+                this.notOutbound.nots = 0;
+                this.notOutbound.select = 2;
+                this.isSearch = 0;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '可输入品牌型号进行搜索';
+                console.log(this.notoqyeryval.num);
+                if (this.notoqyeryval.num != 0) {
+                    this.$axios
+                        .post(this.$store.state.baseUrl + "/StockList", {
+                            page: 1,
+                            pageNum: 10,
+                            type: '0',
+                        })
+                        .then(res => {
+                            console.log("未出库商品列表");
+                            console.log(res);
+                            this.notOrders.notOutboundList1 = res.data.lst;
+                            this.notOrders.total1 = res.data.total;
+                            this.notOrders.totalNum1 = res.data.watchTotal;
+                            console.log(this.notOrders.notOutboundList1);
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        });
+                }
+
+                this.backTop();
+            },
+            // 已出库
+            select5() {
+                this.warehouseSelect = 3;
+                this.marketSelect = 10;
+                this.selected = 50;
+                this.isSearch = 0;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '可输入品牌型号进行搜索';
+                this.haveBound.have = 0;
+                this.backTop();
+            },
+            // 出库/查询
+            select6() {
+                this.warehouseSelect = 4;
+                this.marketSelect = 10;
+                this.selected = 50;
+                this.outboundQuery.query = 0;
+                this.isSearch = 1;
+                this.fuzzyKeyword = '';
+                this.backTop();
+            },
+            // 销售页面的库存
+            marketSelect1() {
+                this.marketSelect = 0;
+                this.warehouseSelect = 10;
+                this.selected = 50;
+                this.forSale.sale = 0;
+                this.isSearch = 0;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '可输入品牌、型号进行搜索';
+                this.backTop();
+                this.$axios
+                    .post(this.$store.state.baseUrl + "/SellStockList", {
+                        page: this.page,
+                        pageNum: this.pageNum
+                    })
+                    .then(res => {
+                        console.log("待售商品列表");
+                        console.log(res);
+                        this.$nextTick(() => {
+                            this.$refs.forsaleMain.page = 1;
+                            this.$refs.forsaleMain.sellStockList = res.data.lst;
+                            this.$refs.forsaleMain.total = res.data.total;
+
+                        })
+
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+
+            },
+            marketSelect1two() {
+                this.marketSelect = 0;
+                this.warehouseSelect = 10;
+                this.selected = 50;
+                this.forSale.sale = 0;
+                this.isSearch = 0;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '可输入品牌、型号进行搜索';
+                this.backTop();
+            },
+            // 进行中的销售
+            marketSelect4() {
+                this.marketSelect = 2;
+                this.warehouseSelect = 10;
+                this.selected = 50;
+                this.onSaleSel.select = 0;
+                this.isSearch = 0;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '可输入品牌、型号进行搜索';
+
+                this.backTop();
+            },
+            // 已完成销售
+            marketSelect5() {
+                this.marketSelect = 3;
+                this.warehouseSelect = 10;
+                this.selected = 50;
+                this.isSearch = 0;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '可输入品牌、型号进行搜索';
+
+                this.backTop();
+            },
+            // 我的报销
+            selected12() {
+                this.selected = 12;
+                this.marketSelect = 10;
+                this.warehouseSelect = 10;
+                this.reimbursementSel.select = 0;
+                this.jumpToRate.selectval = ''
+                this.isSearch = 0;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '可输入行程名称或行程描述进行搜索';
+                this.$nextTick(() => {
+                    this.$refs.reimbursementMain.activeName = 'first'; //点击菜单栏，返回默认页面
+                })
+                this.backTop();
+            },
+            // 报销管理
+            selected13() {
+                this.selected = 13;
+                this.marketSelect = 10;
+                this.warehouseSelect = 10;
+                this.reimbursementAdminSel.select = 0;
+                this.jumpToRate.selectval = '';
+                this.isSearch = 0;
+                this.fuzzyKeyword = '';
+                this.promptMessage = '可输入用户名、昵称进行搜索';
+                this.$nextTick(() => {
+                    this.$refs.reimburseAdmin.activeName = 'one'; //点击菜单栏，返回默认页面
+                })
+
+                this.handleSureReimbursement();
+                this.backTop();
+            },
+            //汇率页面返回处理--报销管理--
+            returnselected13() {
+                console.log(this.jumpToRate.selectval);
+                if (this.jumpToRate.selectval != '') { //从汇率页面跳转，this.jumpToRate.selectval 就不为空
+                    this.reimbursementAdminSel.select = sessionStorage.getItem('reimbursementselect');
+                    console.log(this.reimbursementAdminSel.select + "000");
+                    this.selected = 13;
+                    this.marketSelect = 10;
+                    this.warehouseSelect = 10;
+                    this.isSearch = 0;
+                    this.fuzzyKeyword = '';
+                    this.promptMessage = '可输入用户名、昵称进行搜索';
+                    this.backTop();
+                } else {
+                    this.selected13();
+                    console.log(this.reimbursementAdminSel.select + "--111默认流程");
+                }
+            },
+            //汇率页面返回处理--我的报销--
+            returnselected12() {
+                console.log(this.jumpToRate.selectval);
+                if (this.jumpToRate.selectval != '') { //从汇率页面跳转回来
+                    this.reimbursementSel.select = sessionStorage.getItem('reimbursementSelselect');
+                    this.selected = 12;
+                    this.marketSelect = 10;
+                    this.warehouseSelect = 10;
+                    this.isSearch = 0;
+                    this.fuzzyKeyword = '';
+                    this.promptMessage = '可输入用户名、昵称进行搜索';
+                    this.backTop();
+                } else {
+                    this.selected12();
+                    console.log(this.reimbursementAdminSel.select + "--select12默认流程");
+                }
+            },
+            //汇率页面返回--小费管理页面--
+            returnselected16() {
+                console.log(this.jumpToRate.selectval);
+                if (this.jumpToRate.selectval != '') {
+                    this.tipSel.select = sessionStorage.getItem('tipselselect');
+                    this.selected = 16;
+                    this.marketSelect = 10;
+                    this.warehouseSelect = 10;
+                    this.isSearch = 0;
+                    this.backTop();
+                } else {
+                    this.selected16();
+                    console.log(this.reimbursementAdminSel.select + "--select16默认流程");
+                }
+            },
+            // 报表
+            // 采购报表
+            selected23() {
+                this.marketSelect = 40;
+                this.warehouseSelect = 10;
+                this.selected = 23;
+                this.againclick.times = 0;
+                this.isSearch = 1;
+                this.timer = new Date().getTime()
+            },
+            // 销售报表
+            selected24() {
+                this.marketSelect = 40;
+                this.warehouseSelect = 10;
+                this.selected = 24;
+                this.againclick.times = 0;
+                this.isSearch = 1;
+                this.timer = new Date().getTime()
+            },
+            // 仓库报表
+            selected25() {
+                this.marketSelect = 40;
+                this.warehouseSelect = 10;
+                this.selected = 25;
+                this.againclick.times = 0;
+                this.isSearch = 1;
+                this.timer = new Date().getTime()
+            },
+            closeAndOpen1() {
+                console.log(arrows);
+                if (openOrClose.className == 'close') {
+                    openOrClose.className = 'open';
+                    arrows.className = 'el-icon-arrow-up';
+                    this.isSearch = 0;
+                    this.selected10();
+                } else if (openOrClose.className == 'open') {
+                    openOrClose.className = 'close';
+                    arrows.className = 'el-icon-arrow-down';
+                };
+                openOrClose2.className = 'close';
+                arrows2.className = 'el-icon-arrow-down';
+                openOrClose3.className = 'close';
+                arrows3.className = 'el-icon-arrow-down';
+                openOrClose4.className = 'close';
+                arrows4.className = 'el-icon-arrow-down';
+                openOrClose5.className = 'close';
+                arrows5.className = 'el-icon-arrow-down';
+                warehouseOpenOrClose2.className = 'close';
+                warehouseArrows2.className = 'el-icon-arrow-down';
+                marketOpenOrClose2.className = 'close';
+                marketArrows2.className = 'el-icon-arrow-down';
+            },
+            closeAndOpen1two() {
+                console.log(arrows);
+                if (openOrClose.className == 'close') {
+                    openOrClose.className = 'open';
+                    arrows.className = 'el-icon-arrow-up';
+                    this.isSearch = 0;
+                    this.selected210();
+                } else if (openOrClose.className == 'open') {
+                    openOrClose.className = 'close';
+                    arrows.className = 'el-icon-arrow-down';
+                };
+                openOrClose2.className = 'close';
+                arrows2.className = 'el-icon-arrow-down';
+                openOrClose3.className = 'close';
+                arrows3.className = 'el-icon-arrow-down';
+                openOrClose4.className = 'close';
+                arrows4.className = 'el-icon-arrow-down';
+                openOrClose5.className = 'close';
+                arrows5.className = 'el-icon-arrow-down';
+                warehouseOpenOrClose2.className = 'close';
+                warehouseArrows2.className = 'el-icon-arrow-down';
+                marketOpenOrClose2.className = 'close';
+                marketArrows2.className = 'el-icon-arrow-down';
+            },
+            closeAndOpen2() {
+                console.log(arrows2);
+                if (openOrClose2.className == 'close') {
+                    openOrClose2.className = 'open';
+                    arrows2.className = 'el-icon-arrow-up';
+                    this.isSearch = 1;
+                    this.selected1();
+                } else if (openOrClose2.className == 'open') {
+                    openOrClose2.className = 'close';
+                    arrows2.className = 'el-icon-arrow-down';
+                };
+                openOrClose.className = 'close';
+                arrows.className = 'el-icon-arrow-down';
+                openOrClose3.className = 'close';
+                arrows3.className = 'el-icon-arrow-down';
+                openOrClose4.className = 'close';
+                arrows4.className = 'el-icon-arrow-down';
+                openOrClose5.className = 'close';
+                arrows5.className = 'el-icon-arrow-down';
+                warehouseOpenOrClose2.className = 'close';
+                warehouseArrows2.className = 'el-icon-arrow-down';
+                marketOpenOrClose2.className = 'close';
+                marketArrows2.className = 'el-icon-arrow-down';
+            },
+            closeAndOpen3() {
+                console.log(arrows3);
+                if (openOrClose3.className == 'close') {
+                    openOrClose3.className = 'open';
+                    arrows3.className = 'el-icon-arrow-up';
+                    this.isSearch = 1;
+                    this.selected14();
+                } else if (openOrClose3.className == 'open') {
+                    openOrClose3.className = 'close';
+                    arrows3.className = 'el-icon-arrow-down';
+                };
+                openOrClose.className = 'close';
+                arrows.className = 'el-icon-arrow-down';
+                openOrClose2.className = 'close';
+                arrows2.className = 'el-icon-arrow-down';
+                openOrClose4.className = 'close';
+                arrows4.className = 'el-icon-arrow-down';
+                openOrClose5.className = 'close';
+                arrows5.className = 'el-icon-arrow-down';
+                warehouseOpenOrClose2.className = 'close';
+                warehouseArrows2.className = 'el-icon-arrow-down';
+                marketOpenOrClose2.className = 'close';
+                marketArrows2.className = 'el-icon-arrow-down';
+            },
+            closeAndOpen4() {
+                this.handleSureReimbursement();
+                console.log(arrows4);
+                if (openOrClose4.className == 'close') {
+                    openOrClose4.className = 'open';
+                    arrows4.className = 'el-icon-arrow-up';
+                    this.isSearch = 0;
+                    /////////////////////////////////
+                    if (this.jumpToRate.selectval == '') {
+                        this.selected12();
+                    }
+                } else if (openOrClose4.className == 'open') {
+                    openOrClose4.className = 'close';
+                    arrows4.className = 'el-icon-arrow-down';
+                };
+                openOrClose.className = 'close';
+                arrows.className = 'el-icon-arrow-down';
+                openOrClose2.className = 'close';
+                arrows2.className = 'el-icon-arrow-down';
+                openOrClose3.className = 'close';
+                arrows3.className = 'el-icon-arrow-down';
+                openOrClose5.className = 'close';
+                arrows5.className = 'el-icon-arrow-down';
+                warehouseOpenOrClose2.className = 'close';
+                warehouseArrows2.className = 'el-icon-arrow-down';
+                marketOpenOrClose2.className = 'close';
+                marketArrows2.className = 'el-icon-arrow-down';
+            },
+            closeAndOpen5() {
+                console.log("555555555555");
+                if (openOrClose5.className == 'close') {
+                    openOrClose5.className = 'open';
+                    arrows5.className = 'el-icon-arrow-up';
+                    this.isSearch = 0;
+                    if (this.authorityList[33] == 1) {
+                        this.selected23();
+                    } else if (this.authorityList[34] == 1) {
+                        this.selected24();
+                    }
+                } else if (openOrClose5.className == 'open') {
+                    openOrClose5.className = 'close';
+                    arrows5.className = 'el-icon-arrow-down';
+                };
+                openOrClose.className = 'close';
+                arrows.className = 'el-icon-arrow-down';
+                openOrClose2.className = 'close';
+                arrows2.className = 'el-icon-arrow-down';
+                openOrClose3.className = 'close';
+                arrows3.className = 'el-icon-arrow-down';
+                openOrClose4.className = 'close';
+                arrows4.className = 'el-icon-arrow-down';
+                warehouseOpenOrClose2.className = 'close';
+                warehouseArrows2.className = 'el-icon-arrow-down';
+                marketOpenOrClose2.className = 'close';
+                marketArrows2.className = 'el-icon-arrow-down';
+            },
+            warehouseCloseAndOpen2() {
+                if (warehouseOpenOrClose2.className == 'close') {
+                    warehouseOpenOrClose2.className = 'open';
+                    warehouseArrows2.className = 'el-icon-arrow-up';
+                    this.isSearch = 0;
+                    this.select1();
+                } else if (warehouseOpenOrClose2.className == 'open') {
+                    warehouseOpenOrClose2.className = 'close';
+                    warehouseArrows2.className = 'el-icon-arrow-down';
+                };
+                openOrClose.className = 'close';
+                arrows.className = 'el-icon-arrow-down';
+                openOrClose2.className = 'close';
+                arrows2.className = 'el-icon-arrow-down';
+                openOrClose3.className = 'close';
+                arrows3.className = 'el-icon-arrow-down';
+                openOrClose4.className = 'close';
+                arrows4.className = 'el-icon-arrow-down';
+                openOrClose5.className = 'close';
+                arrows5.className = 'el-icon-arrow-down';
+                marketOpenOrClose2.className = 'close';
+                marketArrows2.className = 'el-icon-arrow-down';
+            },
+            marketCloseAndOpen2() {
+                console.log(this.notoqyeryval.num);
+                if (marketOpenOrClose2.className == 'open') {
+                    marketOpenOrClose2.className = 'close';
+                    marketArrows2.className = 'el-icon-arrow-down';
+                } else if (marketOpenOrClose2.className == 'close') {
+                    marketOpenOrClose2.className = 'open';
+                    marketArrows2.className = 'el-icon-arrow-up';
+                    this.isSearch = 0;
+                    if (this.notoqyeryval.num == 0) {} else {
+                        this.marketSelect1();
+                        console.log(this.notoqyeryval.num);
+                    }
+
+                };
+                openOrClose.className = 'close';
+                arrows.className = 'el-icon-arrow-down';
+                openOrClose2.className = 'close';
+                arrows2.className = 'el-icon-arrow-down';
+                openOrClose3.className = 'close';
+                arrows3.className = 'el-icon-arrow-down';
+                openOrClose4.className = 'close';
+                arrows4.className = 'el-icon-arrow-down';
+                openOrClose5.className = 'close';
+                arrows5.className = 'el-icon-arrow-down';
+                warehouseOpenOrClose2.className = 'close';
+                warehouseArrows2.className = 'el-icon-arrow-down';
+            },
+            radioSel() {
+                this.fuzzyKeyword = '';
+            },
+            // 模糊搜索
+            pageSel() {
+                if (this.selected == 2) {
+                    this.$refs.myPurchase.page = 1;
+                };
+                if (this.selected == 6 || this.marketSelect == 4) {
+                    this.$refs.peerAdminMain.page = 1;
+                }
+                if (this.selected == 7) {
+                    this.$refs.priceAdminMain.page = 1;
+                    this.priceAdmin.page = 1;
+                };
+                if (this.selected == 8) {
+                    this.$refs.priceInquireMain.page = 1;
+                };
+                if (this.selected == 10) {
+                    this.$refs.watchQueryMain.page = 1;
+                };
+                if (this.selected == 12) {
+                    this.$refs.reimbursementMain.page = 1;
+                };
+                if (this.warehouseSelect == 0) {
+                    this.$refs.stockListMain.stockPending = [];
+                    this.$refs.stockListMain.hintMsg = '';
+                };
+                if (this.warehouseSelect == 2) {
+                    this.$refs.notOutboundMain.page = 1;
+                };
+                if (this.warehouseSelect == 3) {
+                    this.$refs.haveOutboundMain.page = 1;
+                };
+                if (this.marketSelect == 0) {
+                    this.$refs.forsaleMain.page = 1;
+                };
+                if (this.marketSelect == 2) {
+                    this.$refs.onsaleMain.page = 1;
+                };
+                if (this.marketSelect == 3) {
+                    this.$refs.completedSaleMain.page = 1;
+                };
+                if (this.selected == 13) {
+                    this.$refs.reimburseAdmin.page = 1;
+                }
+            },
+            keywordSure() {
+                if (this.selected == 2) {
+                    console.log(this.$refs.myPurchase);
+                    this.$refs.myPurchase.keyword = this.fuzzyKeyword;
+                    this.selectSearch.keyword = this.fuzzyKeyword;
+                };
+                if (this.selected == 6 || this.marketSelect == 4) {
+                    this.$refs.peerAdminMain.keyword = this.fuzzyKeyword;
+                }
+                if (this.selected == 7) {
+                    this.$refs.priceAdminMain.keyword = this.fuzzyKeyword;
+                    this.priceAdmin.keyword = this.fuzzyKeyword;
+                };
+                if (this.selected == 8) {
+                    this.$refs.priceInquireMain.keyword = this.fuzzyKeyword;
+                };
+                if (this.selected == 9) {
+                    this.$refs.storeQueryMain.keyword = this.fuzzyKeyword;
+                };
+                if (this.selected == 10) {
+                    console.log(this.fuzzyKeyword);
+                    this.$refs.watchQueryMain.keyword = this.fuzzyKeyword;
+                };
+                if (this.selected == 12) {
+                    this.$refs.reimbursementMain.keyword = this.fuzzyKeyword;
+                };
+                if (this.warehouseSelect == 0) {
+                    this.$refs.stockListMain.keyword = this.fuzzyKeyword;
+                };
+                if (this.warehouseSelect == 2) {
+                    this.$refs.notOutboundMain.keyword = this.fuzzyKeyword;
+                };
+                if (this.warehouseSelect == 3) {
+                    this.$refs.haveOutboundMain.keyword = this.fuzzyKeyword;
+                };
+                if (this.marketSelect == 0) {
+                    this.$refs.forsaleMain.keyword = this.fuzzyKeyword;
+                };
+                if (this.marketSelect == 2) {
+                    this.$refs.onsaleMain.keyword = this.fuzzyKeyword;
+                };
+                if (this.marketSelect == 3) {
+                    this.$refs.completedSaleMain.keyword = this.fuzzyKeyword;
+                };
+                if (this.selected == 13) {
+                    this.$refs.reimburseAdmin.keyword = this.fuzzyKeyword;
+                }
+            },
+            fuzzySearch() {
+                if (this.selected == 2) {
+                    console.log(this.$refs.myPurchase);
+                    this.$refs.myPurchase.keyword = this.fuzzyKeyword;
+                    this.selectSearch.keyword = this.fuzzyKeyword;
+                    this.numSelect.select = 0;
+                    this.$refs.myPurchase.radioChange();
+                };
+                if (this.selected == 6 || this.marketSelect == 4) {
+                    this.$refs.peerAdminMain.keyword = this.fuzzyKeyword;
+                    this.$refs.peerAdminMain.stockInSearch();
+                }
+                if (this.selected == 7) {
+                    this.$refs.priceAdminMain.keyword = this.fuzzyKeyword;
+                    this.priceAdmin.keyword = this.fuzzyKeyword;
+                    this.priceAdmin.select = 0;
+                    this.$refs.priceAdminMain.stockInSearch();
+                };
+                if (this.selected == 8) {
+                    this.$refs.priceInquireMain.keyword = this.fuzzyKeyword;
+                    this.priceInquire.select = 0;
+                    this.$refs.priceInquireMain.stockInSearch();
+                };
+                if (this.selected == 9) {
+                    this.$refs.storeQueryMain.keyword = this.fuzzyKeyword;
+                    this.$refs.storeQueryMain.stockInSearch();
+                };
+                if (this.selected == 10) {
+                    console.log(this.fuzzyKeyword);
+                    this.$refs.watchQueryMain.keyword = this.fuzzyKeyword;
+                    this.watchQuerySel.select = 0;
+                    this.$refs.watchQueryMain.stockInSearch();
+                };
+                if (this.selected == 12) {
+                    this.$refs.reimbursementMain.keyword = this.fuzzyKeyword;
+                    this.reimbursementSel.select = 0;
+                    this.$refs.reimbursementMain.stockInSearch();
+                };
+                if (this.warehouseSelect == 0) {
+                    this.$refs.stockListMain.keyword = this.fuzzyKeyword;
+                    this.stock1.num = 0;
+                    this.$refs.stockListMain.stockInSearch();
+                };
+                if (this.warehouseSelect == 2) {
+                    this.$refs.notOutboundMain.keyword = this.fuzzyKeyword;
+                    this.notOutbound.nots = 0;
+                    this.$refs.notOutboundMain.stockInSearch();
+                };
+                if (this.warehouseSelect == 3) {
+                    this.$refs.haveOutboundMain.keyword = this.fuzzyKeyword;
+                    this.haveBound.have = 0;
+                    this.$refs.haveOutboundMain.stockInSearch();
+                };
+                if (this.marketSelect == 0) {
+                    this.$refs.forsaleMain.keyword = this.fuzzyKeyword;
+                    this.forSale.sale = 0;
+                    this.$refs.forsaleMain.stockInSearch();
+                };
+                if (this.marketSelect == 2) {
+                    this.$refs.onsaleMain.keyword = this.fuzzyKeyword;
+                    this.onSaleSel.select = 0;
+                    this.$refs.onsaleMain.stockInSearch();
+                };
+                if (this.marketSelect == 3) {
+                    this.$refs.completedSaleMain.keyword = this.fuzzyKeyword;
+                    this.$refs.completedSaleMain.stockInSearch();
+                };
+                if (this.selected == 13) {
+                    this.$refs.reimburseAdmin.keyword = this.fuzzyKeyword;
+                    this.reimbursementAdminSel.select = 0;
+                    this.$refs.reimburseAdmin.toConfirmedSel.select = 0;
+                    this.$refs.reimburseAdmin.adminCompleteSel.select = 0;
+                    this.$refs.reimburseAdmin.stockInSearch();
+                }
+            },
+            notKeywordChan() {
+                this.fuzzyKeyword = '';
+            },
+            getStockCount(val) {
+                this.stockInCount = val;
+                this.fuzzyKeyword = '';
+            },
+            getSellPendOrderCount(val) {
+                this.sellPendOrderCount = val;
+            },
+            priceCount(val) {
+                this.dataMaketPriceCount = val;
+            },
+            peerSel(val) {
+                console.log(val);
+                let openOrClose2 = document.getElementById('openOrClose2');
+                let arrows2 = document.getElementById('arrows2');
+                console.log(arrows2);
+                openOrClose2.className = 'open';
+                arrows2.className = 'el-icon-arrow-up';
+                let openOrClose = document.getElementById('openOrClose');
+                let arrows = document.getElementById('arrows');
+                openOrClose.className = 'close';
+                arrows.className = 'el-icon-arrow-down';
+                this.selected3();
+            },
+            storeJump(val) {
+                console.log('店铺跳转');
+                console.log(val);
+                this.purchasePro = val;
+                this.closeAndOpen2();
+            },
+            reimbursementKeyword() {
+                this.fuzzyKeyword = '';
+            },
+            reimListen(val) {
+                console.log(val);
+                this.handleSureReimbursement();
+            },
+            jumptorate(val) { //从汇率页面跳转
+                console.log(val);
+                if (val == 13) {
+                    this.jumpToRate.selectval = val; //select
+                    this.closeAndOpen4()
+                    this.returnselected13()
+                } else if (val == 12) {
+                    this.jumpToRate.selectval = val;
+                    this.closeAndOpen4()
+                    this.returnselected12()
+                } else if (val == 16) {
+                    this.jumpToRate.selectval = val;
+                    this.closeAndOpen3()
+                    this.returnselected16()
+                }
+            },
+            // 跳转至汇率查询页面
+            rateCalcJump(val, time, page) {
+                console.log(val, time, page);
+                this.rateQuerySel.val = val;
+                this.rateQuerySel.time = time;
+                this.rateQuerySel.page = page;
+                this.jumpRate(val, time, page);
+            },
+            jumpRate(val, time, page) {
+                console.log(val, time, page);
+                this.rateQuerySel.val = val;
+                this.rateQuerySel.time = time;
+                this.rateQuerySel.page = page;
+                let openOrClose = document.getElementById('openOrClose');
+                let arrows = document.getElementById('arrows');;
+                console.log(arrows);
+                if (openOrClose.className == 'close') {
+                    openOrClose.className = 'open';
+                    arrows.className = 'el-icon-arrow-up';
+                    this.isSearch = 1;
+                    this.returnselected11();
+                } else if (openOrClose.className == 'open') {
+                    openOrClose.className = 'close';
+                    arrows.className = 'el-icon-arrow-down';
+                };
+                let openOrClose2 = document.getElementById('openOrClose2');
+                let arrows2 = document.getElementById('arrows2');
+                openOrClose2.className = 'close';
+                arrows2.className = 'el-icon-arrow-down';
+                let openOrClose3 = document.getElementById('openOrClose3');
+                let arrows3 = document.getElementById('arrows3');
+                openOrClose3.className = 'close';
+                arrows3.className = 'el-icon-arrow-down';
+                let openOrClose4 = document.getElementById('openOrClose4');
+                let arrows4 = document.getElementById('arrows4');
+                openOrClose4.className = 'close';
+                arrows4.className = 'el-icon-arrow-down';
+                let warehouseArrows2 = document.getElementById('warehouseArrows2');
+                let warehouseOpenOrClose2 = document.getElementById('warehouseOpenOrClose2');
+                warehouseOpenOrClose2.className = 'close';
+                warehouseArrows2.className = 'el-icon-arrow-down';
+                let marketArrows2 = document.getElementById('marketArrows2');
+                let marketOpenOrClose2 = document.getElementById('marketOpenOrClose2');
+                marketOpenOrClose2.className = 'close';
+                marketArrows2.className = 'el-icon-arrow-down';
+
+            },
+            listSelectSum(val) {
+                console.log("gggg");
+                console.log(val);
+            },
+            getBreadList() {
+                for (let routeInfo of this.$route.matched) {
+                    console.log(routeInfo);
+                    if (typeof routeInfo.name === "string" && routeInfo.name !== "home") {
+                        this.breadList.push(routeInfo.name);
+                    }
+                }
+            },
+            updateUserClick() {
+                if (this.updateUser == 1) {
+                    this.updateUser = 0;
+                } else if (this.updateUser == 0) {
+                    this.updateUser = 1;
+                }
+            },
+            tabSelect(val) {
+                this.isSearch = val;
+                this.fuzzyKeyword = '';
+            },
+            // 修改昵称
+            nickUpdate() {
+                this.newNick = '';
+                this.nickDialogVisible = true;
+            },
+            // 确定修改
+            updateNick() {
+                console.log(this.newNick);
+                this.$axios
+                    .post(this.$store.state.baseUrl + "/UserModify", {
+                        nick: this.newNick
+                    })
+                    .then(res => {
+                        console.log("11111");
+                        console.log(res);
+                        if (res.status == 200) {
+                            this.$message.success({
+                                message: "昵称修改成功",
+                                showClose: true,
+                                duration: 2000
+                            });
+                            sessionStorage.setItem("nick", res.data.nick);
+                            this.$store.state.nick = sessionStorage.getItem("nick");
+                            this.nickDialogVisible = false;
+                            this.updateUser = 1;
+                        }
+                    }).catch((err) => {
+                        console.log(err);
+                        this.$message.error({
+                            message: err.data.message,
+                            showClose: true,
+                            duration: 2000
+                        });
+                    })
+            },
+            // 修改密码
+            pswUpdate() {
+                this.oldPsw = '';
+                this.newPsw = '';
+                this.pswDialogVisible = true;
+            },
+            // 确定修改
+            updatePsw() {
+                console.log(sessionStorage.getItem("token"));
+                console.log(this.oldPsw, this.newPsw);
+                this.$axios
+                    .post(this.$store.state.baseUrl + "/UserModify", {
+                        oldPsw: this.oldPsw,
+                        psw: this.newPsw
+                    })
+                    .then(res => {
+                        console.log(res);
+                        if (res.data.token !== "") {
+                            this.$message.success({
+                                message: "密码修改成功",
+                                showClose: true,
+                                duration: 2000
+                            });
+                            sessionStorage.setItem("token", res.data.token);
+                            this.pswDialogVisible = false;
+                            this.updateUser = 1;
+                        }
+                        console.log(sessionStorage.getItem("token"));
+                    }).catch((err) => {
+                        console.log(err);
+                        this.$message.error({
+                            message: err.data.message,
+                            showClose: true,
+                            duration: 2000
+                        });
+                    })
+            },
+            // 退出登录
+            logOut() {
+                this.$router.push('/login');
+                this.$store.dispatch('setToken', null);
+            },
+            // 获取是否有需要确认的报销单 ReimburseList?java
+            handleSureReimbursement() {
+                this.$axios.post(this.$store.state.baseUrl + '/ClaimFormList?java', {
+                    page: 1,
+                    pageNum: 10,
+                    flag: 1
+                }).then((res) => {
+                    console.log('是否有需要确认的报销单');
+                    console.log(res);
+                    if (res.data.lists.length !== 0) {
+                        this.reimData = 1;
+                    } else {
+                        this.reimData = 0;
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                })
+            },
+
+            // 页面回到顶部
+            backTop() {
+                let timer = null;
+                cancelAnimationFrame(timer);
+                timer = requestAnimationFrame(function fn() {
+                    var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+                    if (oTop > 0) {
+                        document.body.scrollTop = document.documentElement.scrollTop = oTop - 100;
+                        timer = requestAnimationFrame(fn);
+                    } else {
+                        cancelAnimationFrame(timer);
+                    }
+                });
+            },
+            // 阻止页面后退
+            keydown() {
+                console.log(window);
+                window.document.onkeydown = function() {
+                    if (
+                        window.event.altKey &&
+                        (window.event.keyCode == 37 || window.event.keyCode == 39)
+                    ) {
+                        // alert("不准你使用ALT+方向键前进或后退网页！");
+                        event.returnValue = false;
+                    }
+                };
+            },
+        }
+    }
+</script>
+<style lang="scss" scoped>
+    .selected-circle-style {
+        width: 10px;
+        height: 10px;
+        margin: 0;
+        margin-top: 25px;
+        margin-left: 3px;
+        background-color: red;
+        border-radius: 50%;
+    }
+    
+    .filtrate {
+        width: 35px;
+        height: 35px;
+        margin-right: 15px;
+        cursor: pointer;
+    }
+    
+    .top-search-button {
+        width: 80px;
+        height: 40px;
+        margin-top: 20px;
+        background-color: #0c7063;
+        color: #fff;
+        outline: none;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+    }
+    
+    ul,
+    li,
+    a {
+        margin: 0;
+        padding: 0;
+        text-decoration: none;
+        list-style: none;
+    }
+    
+    .aside {
+        width: 324px;
+        padding-top: 30px;
+        padding-bottom: 30px;
+        background: #0c7063;
+        ul li {
+            margin-top: 40px;
+            list-style: none;
+            cursor: pointer;
+            color: #fff;
+        }
+        .aside-container {
+            width: 100%;
+            position: absolute;
+            margin-bottom: 76px;
+            // padding-left: 10px;
+            z-index: 999;
+            text-align: center;
+            .aside-top,
+            .aside-top-admin {
+                font-size: 28px;
+                color: #fff;
+                text-align: center;
+                line-height: 36px;
+            }
+            .aside-top {
+                padding: 0 60px;
+            }
+            .aside-top-admin {
+                padding: 0 50px;
+            }
+            .person-ul {
+                width: 100%;
+                .first-li {
+                    padding-left: 30px;
+                    padding-right: 30px;
+                    .li-selected-background {
+                        width: 100%;
+                        height: 76px;
+                        margin-top: 10px;
+                        padding-left: 30px;
+                        line-height: 76px;
+                        background: url('../../assets/imgs/selected.png');
+                    }
+                    .icon {
+                        margin-right: 10px;
+                        font-size: 16px;
+                    }
+                }
+                .icon-size {
+                    width: 21px;
+                    height: 20px;
+                }
+            }
+        }
+    }
+    
+    .logoImg {
+        width: 100px;
+        height: 120px;
+    }
+    
+    .close {
+        display: none;
+    }
+    
+    .open {
+        width: 100%;
+        display: block;
+    }
+    
+    .up {
+        color: #2e4d65;
+    }
+    
+    .down {
+        color: #f1f1f1;
+    }
+    
+    .main {
+        width: 89%;
+        padding: 0;
+        margin: 0;
+        position: relative;
+        .main-top {
+            height: 80px;
+            padding-left: 50px;
+            margin-bottom: 30px;
+            position: fixed;
+            top: 0;
+            left: 324px;
+            line-height: 80px;
+            background-color: #fff;
+            z-index: 9999;
+            .main-top-left {
+                position: absolute;
+                top: 30px;
+                left: 0;
+                display: flex;
+                line-height: 2;
+                .first-fint-size {
+                    font-size: 18px;
+                }
+                .fint-size {
+                    font-size: 16px;
+                    color: #aaa;
+                }
+            }
+            .main-top-right {
+                width: 100%;
+                height: 60px;
+                position: relative;
+                .loginout {
+                    margin-left: 5px;
+                    color: #000;
+                    font-size: 15px;
+                }
+                .right-div {
+                    width: 200px;
+                    position: absolute;
+                    top: 0;
+                    right: 570px;
+                    height: 45px;
+                    line-height: 45px;
+                    margin-top: 15px;
+                    padding: 0;
+                    display: flex;
+                    justify-content: space-evenly;
+                    cursor: pointer;
+                    .span1 {
+                        display: inline-block;
+                        font-size: 16px;
+                        color: #000;
+                        overflow: hidden;
+                        word-break: keep-all;
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
+                    }
+                }
+                .cut-off-rule {
+                    width: 2px;
+                    height: 26px;
+                    position: absolute;
+                    top: 27px;
+                    right: 530px;
+                    background-color: #f1f1f1;
+                }
+                .loginoutDiv {
+                    display: flex;
+                    line-height: 80px;
+                    position: absolute;
+                    top: 0;
+                    right: 390px;
+                    cursor: pointer;
+                }
+                .downbtn {
+                    width: 170px;
+                    padding: 10px 15px;
+                    position: absolute;
+                    top: 130%;
+                    right: 570px;
+                    background-color: #fff;
+                    border: 1px solid #ddd;
+                    border-radius: 20px;
+                    // box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+                    z-index: 999;
+                    .updateUl,
+                    .updateLi1 {
+                        margin: 0;
+                        padding: 0;
+                        list-style: none;
+                    }
+                    .updateLi1 {
+                        .updateP {
+                            text-align: center;
+                            color: #000;
+                            .update-nick-img {
+                                // width: 50px;
+                                height: 40px;
+                                margin: 0 auto;
+                                line-height: 40px;
+                                border-radius: 15px;
+                                display: flex;
+                                justify-content: space-around;
+                                span {
+                                    font-size: 15px;
+                                }
+                            }
+                            .nick-img {
+                                width: 70%;
+                                margin: 10px auto;
+                                border-bottom: 1px solid #c8c8c8;
+                            }
+                            .psw-img {
+                                width: 70%;
+                                margin: 2px auto;
+                            }
+                        }
+                        .update-nick {
+                            width: 70%;
+                            padding-left: 20px;
+                            border-radius: 5px;
+                            border: 1px solid #ddd;
+                            outline: none;
+                        }
+                        .updateP:hover {
+                            cursor: pointer;
+                        }
+                    }
+                    .update-nick {
+                        width: 70%;
+                        padding-left: 20px;
+                        border-radius: 5px;
+                        border: 1px solid #ddd;
+                        outline: none;
+                    }
+                    li {
+                        line-height: 30px;
+                        text-align: left;
+                        padding-left: 5px;
+                    }
+                    a:hover {
+                        text-decoration: underline;
+                        color: #f00;
+                    }
+                    a {
+                        display: block;
+                        color: black;
+                        width: 100%;
+                    }
+                }
+            }
+        }
+        .main-container {
+            width: 100%;
+            // 1000px
+            min-height: 900px;
+            padding-bottom: 50px;
+            margin-top: 80px;
+            padding-top: 20px;
+            background-color: #f1f9f7;
+            z-index: 0;
+        }
+        .radius {
+            width: 50px;
+            height: 50px;
+        }
+    }
+</style>
+<style lang="scss">
+    #container-home {
+        .upload-imgs {
+            margin: 20px 0;
+        }
+        .el-dialog {
+            border-radius: 30px;
+        }
+        .el-button {
+            height: 48px;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        .el-button--primary {
+            color: #fff;
+            background-color: #0c7063 !important;
+            border-color: #0c7063 !important;
+        }
+        .el-dialog--center .el-dialog__footer {
+            text-align: right;
+        }
+        .el-button+.el-button {
+            margin-left: 10%;
+        }
+        .first-td {
+            border-top-left-radius: 30px;
+            border-bottom-left-radius: 30px;
+        }
+        .last-td {
+            border-top-right-radius: 30px;
+            border-bottom-right-radius: 30px;
+        }
+        table tr:hover>td {
+            background-color: #d7ebe7 !important;
+        }
+        .el-form-item::after,
+        .el-form-item::before {
+            display: none;
+            content: "";
+        }
+        .el-form-item__content::after,
+        .el-form-item__content::before {
+            display: none;
+            content: "";
+        }
+        .el-input__suffix {
+            width: 30%;
+        }
+        // .el-input {
+        //   width: 60%;
+        // }
+        .el-date-editor.el-input,
+        .el-date-editor.el-input__inner {
+            width: 50%;
+        }
+        .el-input__inner {
+            height: 40px;
+            border-radius: 30px;
+        }
+        .el-pagination button:disabled {
+            color: #c0c4cc;
+            background-color: transparent;
+            cursor: not-allowed;
+        }
+        div .el-pager li {
+            background-color: transparent !important;
+        }
+        .el-pagination .btn-next,
+        .el-pagination .btn-prev {
+            background: center center no-repeat transparent;
+            background-size: 16px;
+            cursor: pointer;
+            margin: 0;
+            color: #303133;
+        }
+        .input-search {
+            font-size: 16px;
+        }
+        .el-form-item__label {
+            font-size: 16px;
+            text-align: right;
+        }
+        .el-pagination__editor.el-input .el-input__inner {
+            height: 28px;
+        }
+        // input[type=checkbox]:after {
+        //   width: 20px;
+        //   height: 20px;
+        // }
+        .el-dialog__footer {
+            padding: 10px 60px 30px;
+        }
+        .el-checkbox__label {
+            font-size: 14px;
+        }
+        table>tr:hover>td {
+            background-color: #d7ebe7 !important;
+        }
+        table>tr>th {
+            height: 50px;
+            line-height: 50px;
+            background-color: #d7ebe7;
+        }
+        table>tr>td {
+            background-color: #f3fbf9;
+            border-bottom: 1px solid #d7ebe7;
+            word-break: break-all;
+        }
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+    }
+</style>

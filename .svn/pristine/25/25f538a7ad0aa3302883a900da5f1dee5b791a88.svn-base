@@ -1,0 +1,13 @@
+{
+  "name": "TopTime在线办公系统",
+  "short_name": "TopTime",
+  "start_url": "/index.html",
+  "icons": [{
+    "src": "img/logo.png",
+    "sizes": "144x144",
+    "type": "image/png"
+  }],
+  "background_color": "#0c7063",
+  "theme_color": "#fff",
+  "display": "standalone"
+}

@@ -1,0 +1,704 @@
+<template>
+  <div class="Sale-reports" id="Sale-reports">
+    <div class="reports-content" v-if="againclick.times == 0">
+      <div class="report-center1">
+        <div class="report-heade">
+          <span class="heade-title">销售报表</span>
+          <img src="../../../src/assets/imgs/chart.png" alt="" class="bar-chart" @click="barchart" title="采购报表柱状图" style="cursor: pointer;"/>
+        </div>
+        <div class="report-form">
+          <el-form id="report-input" ref="form" >
+            <div class="report-input">
+              <!-- 采购员--货源 -->
+              <el-form-item label="货源:" style="width: 50%;"
+                :rules="[{ required: true, message: '采购员不能为空' }]" >
+                <el-select v-model="value1" filterable placeholder="请选择" style="width: 90%;"
+                  @change="currentSel">
+                  <el-option v-for="item in purchaserLists" :key="item.id" :label="item.nick" :value="item.id"
+                    style="width: 500px;" @click="currentSel">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <!-- 销售员--用户列表 -->
+              <el-form-item label="用户列表:" style="width: 50%; "
+                 :rules="[{ required: true, message: '用户列表不能为空' }]">
+                  <el-select v-model="value2" filterable placeholder="请选择" style="width: 90%;" @change="userchange">
+                    <el-option v-for="item in salesLists" :key="item.id" :label="item.nick" :value="item.id"
+                       style="width: 500px;" @click="userchange">
+                    </el-option>
+                  </el-select>
+              </el-form-item>
+              <!--日期-->
+              <el-form-item label="起止时间:" style="width: 50%;"
+                :rules="[{ required: true, message: '不能为空' }]">
+                <el-date-picker v-model="mytime" type="daterange" range-separator="~" @change="getMyDateTime()"
+                  value-format="yyyy-MM-dd" start-placeholder="开始日期" end-placeholder="结束日期" style="width: 90%;">
+                </el-date-picker>
+              </el-form-item>
+            </div>
+          </el-form>
+        </div>
+      </div>
+      <div class="report-content2">
+          <div class="report-num">
+            <div class="watch-nums">
+              <div class="watch-salenums">
+                <p class="watch-nums-title">手表数量 :</p>
+                <p class="watch-nums-total">{{ salesreportList.watchTotal }}</p>
+              </div>
+            </div>
+            <div class="watch-nums">
+              <div class="watch-salenums">
+                <p class="watch-nums-title">销售金额:</p>
+                <p class="watch-nums-total">
+                  {{ formatNumberRgx(salesreportList.allMoney) + " " + "HKD" }}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div v-show="imgurl.length == 0" style="text-align: center;">
+            <p>{{ hintMsg }}</p>
+          </div>
+          <div class="report-watch" id="report-watch" v-if="imgurl.length !== 0">
+            <table>
+              <tr class="table-tr">
+                <th>图片</th>
+                <th>手表信息</th>
+                <th>销售员</th>
+                <th>查看详情</th>
+              </tr>
+              <tr v-for="(item,index) in imgurl" :key="index" class="imgurlbox">
+                <td>
+                  <img v-image-preview
+                    :src=" item.watchPic == null || item.watchPic == '' ? '' : img + '/img/watch/' + item.watchPic.split('|')[0] "
+                    class="watch-img" />
+                </td>
+                <td style="text-align: left;">
+                  <div>
+                  <span>品牌 ：</span>
+                  <span>{{ item.watchBrand }}</span></div>
+                  <div>
+                  <span>型号 ：</span>
+                  <span>{{ item.watchModel }}</span></div>
+                  <div v-if="item.costMoney!=0">
+                    <span>成本价：</span>
+                    <span>{{formatNumberRgx(item.costMoney) + "  " + "HKD"}}</span>
+                  </div>
+                  <div v-else>
+                    <span>采购价 ：</span>
+                    <span>{{formatNumberRgx(item.buy_watchPrice) + "  " + "HKD"}}</span>
+                  </div>
+                  <div>
+                    <span>销售价格 ：</span>
+                    <span>{{ formatNumberRgx(item.sell_money ) + "  " + "HKD"}}</span>
+                  </div>
+                  <div v-if="item.costMoney!=0">
+                    <span>利润 ：</span>
+                    <span :style="item.sell_money-item.costMoney>0?'color:green;':'color:red;'">{{ formatNumberRgx(item.sell_money-item.costMoney) + "  " + "HKD"}}</span>
+                  </div>
+                </td>
+                <td>
+                  <p>{{item.name}}</p>
+                </td>
+                <td class="salebox">
+                  <img style="cursor:pointer" src="../../assets/imgs/details.png" alt="" title="查看详情" @click="details(item.sell_orderId,item.buy_id)"/>
+                  <p class="saletime">{{item.sell_time}}</p>
+                </td>
+              </tr>
+            </table>
+          </div>
+      </div>
+      <!-- 分页 -->
+      <div style="width: 100%;height: 50px;">
+        <div style="margin:15px 0;position:absolute;right:6%;">
+          <el-pagination @current-change="handleCurrentChange" :current-page="page"
+            layout="total, prev, pager, next, jumper" :total="total">
+          </el-pagination>
+        </div>
+      </div>
+    </div>
+    <div class="chartbox" v-if="againclick.times == 1">
+      <div class="returnlastpage" style="margin-top: 0; " @click="backto">
+        <div>
+          <img src="../../assets/imgs/goback.png" />
+        </div>
+        <span class="font">返回</span>
+      </div>
+      <!--柱状图组件-->
+      <Sale-chart @backtime="backtime" :datanews="datanews" @backnick="backnick"></Sale-chart>  
+    </div>
+    <div class="chartbox" v-if="againclick.times == 3">
+      <div class="returnlastpage" style="margin-top: 0; " @click="backto">
+        <div>
+          <img src="../../assets/imgs/goback.png" />
+        </div>
+        <span class="font">返回</span>
+      </div>
+      <div class="sale-content">
+        <div class="message-heade">
+            <div class="message-title">
+                <div class="titlebox">
+                    <div class="title-line"></div>
+                    <span style="line-height: 28px;">订单详情</span>                        
+                </div>
+                <img src="../../assets/imgs/right.png" alt="">
+            </div>
+            <div class="message-purchase" @click="detailspage"  style="cursor:pointer" >
+              <img src="../../assets/imgs/店铺.png" alt="" class="messagelogo">
+                <span>采购单详情</span>
+            </div>
+            <div class="message-purchase" @click="saledetails(sellmessage)" style="cursor:pointer">
+              <img src="../../assets/imgs/公司@2x.png" alt="" class="messagelogo">
+                <span>销售单详情</span>
+            </div>
+        </div>
+        <div class="message-content">
+            <div class="message-title">
+                <div class="titlebox">
+                    <div class="title-line"></div>
+                    <span style="line-height: 22px;">主要信息</span>    
+                </div>
+                    <img src="../../assets/imgs/right.png" alt="">
+            </div>
+              <div class="message-main"  >
+                <div class="message-mainbox">
+                      <div style="display: flex;flex-wrap: nowrap;" class="mainbox-line">
+                    <img src="../../assets/imgs/品牌.png" alt="" class="messagelogo"><span>品牌 ：</span><span>{{sellinfoList.buy_watchBrand}}</span>
+                  </div>
+                  <div style="display: flex;flex-wrap: nowrap;" class="mainbox-line">
+                    <img src="../../assets/imgs/类型.png" alt="" class="messagelogo"><span>型号 ：</span><span>{{sellinfoList.buy_watchModel}}</span>
+                  </div>
+                </div>
+                <div class="message-mainbox">
+                  <div style="display: flex;flex-wrap: nowrap;" class="mainbox-line">
+                    <img src="../../assets/imgs/联系人.png" alt="" class="messagelogo"><span>采购员 ：</span><span>{{sellmessage.buy_userNick}}</span>
+                </div>
+                <div style="display: flex;flex-wrap: nowrap;" class="mainbox-line">
+                  <img src="../../assets/imgs/联系人.png" alt="" class="messagelogo">
+                  <span>销售员 ：</span><span>{{sellmessage.sell_userNick}}</span>
+                </div>
+                <div style="display: flex;flex-wrap: nowrap;" class="mainbox-line">
+                  <img src="../../assets/imgs/负责人@2x.png" alt="" class="messagelogo">
+                  <span>客户名称 ：</span><span>{{sellinfoList.sell_custom}}</span></div>
+                </div>
+                <div class="message-mainbox">
+                  <div style="display: flex;flex-wrap: nowrap;" class="mainbox-line">
+                    <img src="../../assets/imgs/日期.png" alt="" class="messagelogo">
+                  <span>采购时间：</span><span>{{sellmessage.buy_date}}</span>
+                  </div>
+                  <div style="display: flex;flex-wrap: nowrap;" class="mainbox-line">
+                    <img src="../../assets/imgs/日期.png" alt="" class="messagelogo">
+                  <span>入库时间 ：</span><span>{{sellmessage.stock_inTime}}</span>
+                </div>
+                <div style="display: flex;flex-wrap: nowrap;" class="mainbox-line">
+                  <img src="../../assets/imgs/日期.png" alt="" class="messagelogo">
+                  <span>销售时间 ：</span><span>{{sellinfoList.sell_time}}</span></div>
+                </div>
+                <div class="message-mainbox">
+                  <div style="display: flex;flex-wrap: nowrap;" class="mainbox-line">
+                    <img src="../../assets/imgs/仓库@2x.png" alt="" class="messagelogo">
+                  <span>仓库名称 ：</span><span>{{sellmessage.wareHouse}}</span>
+                  </div>
+                  <div style="display: flex;flex-wrap: nowrap;" class="mainbox-line">
+                    <img src="../../assets/imgs/时间@2x.png" alt="" class="messagelogo">
+                  <span>在库时长 ：</span><span>{{daytime}}天</span>
+                </div>
+                </div>
+                <div class="message-mainbox">
+                  <div style="display: flex;flex-wrap: nowrap;" class="mainbox-line">
+                    <img src="../../assets/imgs/采购价格.png" alt="" class="messagelogo">
+                  <span>采购价格 ：</span><span v-if="sellmessage.buy_watchPrice!=0">{{formatNumberRgx(sellmessage.buy_watchPrice)+"HKD"}}</span><span v-else>  ---</span>
+                </div>
+                <div style="display: flex;flex-wrap: nowrap;" class="mainbox-line">
+                  <img src="../../assets/imgs/采购价格.png" alt="" class="messagelogo">
+                  <span>成本价格 ： </span><span v-if="sellmessage.costMoney!=0">{{formatNumberRgx(sellmessage.costMoney)+"HKD"}}</span><span v-else>  ---</span>
+                </div>
+                <div style="display: flex;flex-wrap: nowrap;" class="mainbox-line">
+                  <img src="../../assets/imgs/采购价格.png" alt="" class="messagelogo">
+                  <span>批发价格 ：</span><span v-if="sellmessage.marketPrice!=0">{{formatNumberRgx(sellmessage.marketPrice)+"HKD"}}</span><span v-else>  ---</span>
+                </div>
+                <div style="display: flex;flex-wrap: nowrap;" class="mainbox-line">
+                  <img src="../../assets/imgs/采购价格.png" alt="" class="messagelogo">
+                  <span>销售价格 ：</span><span v-if="sellmessage.sell_money!=0">{{formatNumberRgx(sellmessage.sell_money)+"HKD"}}</span><span v-else>  ---</span>
+                </div>
+                <div style="display: flex;flex-wrap: nowrap;" class="mainbox-line">
+                  <img src="../../assets/imgs/采购价格.png" alt="" class="messagelogo">
+                  <span>利润 ：</span><span :style="sellmessage.sell_money-sellmessage.costMoney>0?'color:green;':'color:red;'" v-if="sellmessage.costMoney!=0">{{formatNumberRgx(sellmessage.sell_money-sellmessage.costMoney)+" "+"HKD"}}</span>
+                  <span v-else>  ---</span>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <!-- 采购报表详情 -->
+    <Details :detailsSelect="detailsSelect" @backbuy="backbuy" v-if="againclick.times == 2">
+    </Details>
+    <!--销售报表详情-->
+    <Sale-details v-if="againclick.times == 4" @backbuy="backbuy" :detailsSale="detailsSale"></Sale-details>
+  </div>
+</template>
+<script>
+    export default {
+        data() {
+            return {
+                hintMsg: "数据加载中...",
+                img: this.$store.state.baseUrl,
+                purchaserLists: {
+                    id: "",
+                    nick: "",
+                },
+                salesLists: {
+                    id: "",
+                    nick: "",
+                },
+                mytime: [],
+                mytime1: "",
+                mytime2: "",
+                value1: "",
+                value2: "",
+                backnicks: {
+                    name: "",
+                    id: "",
+                },
+                salesreportList: "",
+                imgurl: [],
+                datanews: {
+                    startT: "",
+                    endT: "",
+                    nick: "",
+                    id: 0,
+                },
+                salerid: 0,
+                buyerid: 0,
+                total: 0,
+                page: 1,
+                sellorderId: "",
+                pageNum: 10,
+                sellmessage: "",
+                sellinfoList: {
+
+                },
+                detailsSelect: {
+                    id: 1,
+                    num: 0,
+                    buy_commState: 0,
+                },
+                detailsSale: {
+
+                },
+                nowdate: "",
+                daytime: "",
+
+            }
+
+        },
+        props: ["againclick"],
+        created() {
+            this.addtime();
+            this.mytime = [this.mytime1, this.mytime2];
+            console.log(this.mytime);
+            this.salesList();
+            this.getMyDateTime();
+        },
+        mounted() {
+
+
+        },
+        methods: {
+            // 采购员--销售员
+            salesList() {
+                this.$axios
+                    .post(this.$store.state.baseUrl + "/salesList")
+                    .then((res) => {
+                        this.purchaserLists = res.data.purchaserList;
+                        this.salesLists = res.data.salesList;
+                        this.value1 = this.purchaserLists[0].nick;
+                        this.value2 = this.salesLists[0].nick;
+                        this.datanews.nick = this.value2;
+                    });
+            },
+            getDateTime() {
+                this.page = 1;
+                this.getMyDateTime();
+            },
+            // 更改日期---加载数据
+            getMyDateTime() {
+                (this.mytime1 = this.mytime[0]),
+                (this.mytime2 = this.mytime[1]),
+                // console.log(this.mytime1 + "-----" + this.mytime2);
+                // console.log(this.salerid);
+                this.hintMsg = "数据加载中...";
+                this.imgurl = [];
+                this.$axios
+                    .post(this.$store.state.baseUrl + "/salesReport", {
+                        id: this.salerid,
+                        buy_userId: this.buyerid,
+                        startTime: this.mytime1,
+                        endTime: this.mytime2,
+                        page: this.page,
+                        pageNum: this.pageNum
+                    })
+                    .then((res) => {
+                        this.salesreportList = res.data;
+                        this.imgurl = res.data.watchList;
+                        this.total = res.data.watchTotal;
+                        console.log(res.data);
+                        if (this.imgurl.length == 0) {
+                            this.hintMsg = "啊哦~ 暂无数据";
+                        }
+                    });
+            },
+            // 销售单详情
+            sellOrder() {
+                let aDate, oDate1, oDate2
+                    // this.addtime()
+                this.$axios
+                    .post(this.$store.state.baseUrl + "/sellOrderInfo", {
+                        sell_orderId: this.sellorderId
+                    })
+                    .then((res) => {
+                        this.sellmessage = res.data;
+                        this.sellinfoList = res.data.sellInfo;
+                        if (this.sellmessage.stock_outTime == "" || this.sellmessage.stock_outTime == null) {
+                            aDate = this.nowdate.split("-")
+                            oDate1 = new Date(aDate[0], aDate[1], aDate[2]) //转换为12-18-2006格式  
+                            aDate = this.sellmessage.stock_inTime.split("-")
+                            oDate2 = new Date(aDate[0], aDate[1], aDate[2])
+                        } else {
+                            aDate = this.sellmessage.stock_inTime.split("-")
+                            oDate1 = new Date(aDate[0], aDate[1], aDate[2]) //转换为12-18-2006格式  
+                            aDate = this.sellmessage.stock_outTime.split("-")
+                            oDate2 = new Date(aDate[0], aDate[1], aDate[2])
+                        }
+                        this.daytime = parseInt(Math.abs(oDate1 - oDate2) / 1000 / 60 / 60 / 24) //把相差的毫秒数转换为天数  
+                    })
+            },
+            // 更改货源时
+            currentSel(val) {
+                this.buyerid = val;
+                this.page = 1;
+                this.getMyDateTime();
+            },
+            // 更改销售员时
+            userchange(val) {
+                this.salerid = val;
+                this.page = 1;
+                this.getMyDateTime();
+                // 上一页选择的货源、用户列表传到下一页
+                let obj = {};
+                obj = this.salesLists.find((item) => {
+                    //遍历的数据源
+                    return item.id === val; //筛选出匹配数据
+                });
+                this.datanews.nick = obj.nick;
+                this.datanews.id = this.salerid;
+            },
+            // 柱状图
+            barchart() {
+                this.againclick.times = 1;
+                console.log("柱状图" + this.againclick.times);
+                this.datanews.startT = this.mytime1;
+                this.datanews.endT = this.mytime2;
+            },
+            // 分别获取今年时间--当前时间
+            addtime() {
+                let yy = new Date().getFullYear();
+                let mm = new Date().getMonth() + 1;
+                let dd = new Date().getDate();
+                mm = mm < 10 ? "0" + mm : mm;
+                dd = dd < 10 ? "0" + dd : dd;
+                this.mytime1 = yy + "-" + "01" + "-" + "01";
+                this.mytime2 = yy + "-" + mm + "-" + dd;
+                this.nowdate = yy + "-" + mm + "-" + dd;
+            },
+            // 点击查看详情跳转至详情页面1
+            details(sell_orderId, buy_id) {
+                this.againclick.times = 3;
+                this.sellorderId = sell_orderId;
+                this.sellOrder();
+                // 将采购单号存至本地
+                sessionStorage.setItem("buy_id", buy_id);
+            },
+            // 查看详情2
+            detailspage() {
+                this.againclick.times = 2;
+            },
+            // 返回至查看详情页面1
+            backbuy(val) {
+                this.againclick.times = 3;
+                this.detailsSelect.num = 0;
+                // console.log(this.againclick.times);
+            },
+            // 分页
+            handleCurrentChange(val) {
+                console.log(`当前页: ${val}`);
+                this.page = val;
+                this.getMyDateTime();
+            },
+            // 返回到销售报表页面
+            backto() {
+                this.againclick.times = 0;
+
+                console.log(this.salerid);
+                this.getMyDateTime();
+                this.sellOrder();
+            },
+            // 销售报表
+            saledetails(item) {
+                this.againclick.times = 4;
+                this.detailsSale = item;
+            },
+            // 子组件传回更改后的时间
+            backtime(val, newv) {
+                this.mytime = [val, newv];
+
+                console.log(this.mytime);
+            },
+            // 子组件传回的销售员姓名、id
+            backnick(nickval, idval) {
+                this.value2 = nickval;
+                this.salerid = idval;
+            },
+        }
+    }
+</script>
+<style lang="scss" scoped>
+    #Sale-reports {
+        width: 100%;
+    }
+    
+    .reports-content {
+        width: 95%;
+        margin: 0 auto;
+        font-size: 16px;
+        border-radius: 30px;
+        font-family: "微软雅黑";
+    }
+    
+    .report-center1 {
+        width: 98%;
+        margin: 0px auto 20px;
+        background-color: #fff;
+        border-radius: 30px;
+    }
+    
+    .report-heade {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+        padding: 30px;
+        color: #2c3e50;
+    }
+    
+    .report-heade img {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .heade-title {
+        font-size: 18px;
+        font-weight: bold;
+    }
+    
+    .report-content2 {
+        width: 98%;
+        margin: 0 auto;
+    }
+    
+    .report-form {
+        width: 100%;
+        margin: -10px 30px;
+        /* background-color: #d7ebe7; */
+    }
+    
+    #Purchase-report .el-form-item__label {
+        font-size: 16px;
+        text-align: right;
+    }
+    
+    .report-input {
+        width: 100%;
+        /* height: 80px; */
+        display: block;
+        display: flex;
+        align-items: center;
+    }
+    
+    .report-num {
+        display: flex;
+        flex-wrap: nowrap;
+        margin: 30px auto 20px;
+        align-items: center;
+    }
+    
+    .watch-nums {
+        width: 732px;
+        background-color: #fff;
+        border-radius: 30px;
+    }
+    
+    .watch-nums:first-of-type {
+        margin-right: 20px;
+    }
+    
+    .watch-salenums {
+        margin: 30px 0 0px 30px;
+    }
+    
+    .watch-nums-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #2c3e50;
+        margin: 0 0 20px 0;
+    }
+    
+    .watch-nums-total {
+        color: #2c3e50;
+        font-size: 26px;
+        font-weight: bold;
+        margin: 0 0 40px 0;
+    }
+    
+    .report-watch {
+        /* margin: 0 30px; */
+        width: 100%;
+    }
+    
+    #report-watch table>tr {
+        text-align: center;
+    }
+    
+    .table-tr {
+        height: 40px;
+        line-height: 40px;
+        border-bottom: 0;
+    }
+    
+    #report-watch table>tr>td {
+        background-color: #f3fbf9;
+        border-bottom: 1px solid #d7ebe7;
+        padding: 20px;
+        width: 25%;
+    }
+    
+    .watch-img {
+        width: 100px;
+        height: 100px;
+        border-radius: 30px;
+        -o-object-fit: cover;
+        object-fit: cover;
+    }
+    
+    .chartbox {
+        width: 95%;
+        margin: 0 auto;
+        border-radius: 30px;
+        background-color: #fff;
+    }
+    /* .chartbox2{
+        width: 95%;
+        margin: 0 auto;
+        border-radius: 30px;
+    } */
+    
+    .returnlastpage {
+        width: 75px;
+        height: 45px;
+        margin: 23px;
+        line-height: 45px;
+        padding-top: 18px;
+        display: flex;
+        justify-content: space-between;
+        cursor: pointer;
+    }
+    
+    .returnlastpage img {
+        width: 30px;
+        height: 25px;
+    }
+    
+    .returnlastpage div {
+        margin-top: 5px;
+    }
+    
+    .sale-content {
+        width: 95%;
+        margin: 0 auto;
+        font-size: 16px;
+        border-radius: 30px;
+    }
+    
+    .message-heade,
+    .message-content {
+        width: 96%;
+        margin: auto;
+        margin-bottom: 20px;
+    }
+    
+    .titlebox {
+        display: flex;
+        flex-wrap: nowrap;
+    }
+    
+    .title-line {
+        width: 4px;
+        height: 22px;
+        background-color: orange;
+        margin: 0 10px;
+    }
+    
+    .message-title {
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        height: 28px;
+        line-height: 28px;
+        /* width: 98%;
+        margin: auto; */
+    }
+    
+    .message-title img {
+        width: 22px;
+        height: 22px;
+    }
+    
+    .message-purchase {
+        margin: 0 26px;
+        height: 30px;
+        line-height: 30px;
+    }
+    
+    .messagelogo {
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+        vertical-align: middle;
+    }
+    
+    .salebox {
+        position: relative;
+    }
+    
+    .saletime {
+        position: absolute;
+        bottom: 10px;
+        right: 18px;
+        color: #2c3e50;
+        font-size: 12px;
+    }
+    
+    .message-main {
+        width: 96%;
+        margin: auto;
+        padding-bottom: 20px;
+    }
+    
+    .message-mainbox {
+        margin: 10px;
+    }
+    
+    .mainbox-line {
+        margin: 6px;
+    }
+</style>

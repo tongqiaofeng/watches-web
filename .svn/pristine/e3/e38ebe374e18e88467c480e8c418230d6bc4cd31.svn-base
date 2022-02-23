@@ -1,0 +1,240 @@
+<template>
+  <div class="Sale-details">
+    <div class="details-content">
+      <div class="returnlastpage" style="margin-top: 0; " @click="backto">
+        <div>
+          <img src="../../assets/imgs/goback.png" />
+        </div>
+        <span class="font">返回</span>
+      </div>
+      <div class="details-contentbox">
+        <div class="message-mainbox">
+          <div class="mainbox-block">
+            <img src="../../assets/imgs/brand.png" alt="" class="messagelogo" />
+            <span>手表型号 :</span><span>{{ sellinfoList.buyWatchModel }}</span>
+          </div>
+          <div class="mainbox-block">
+            <img src="../../assets/imgs/dates.png" alt="" class="messagelogo" />
+            <span>销售日期 :</span><span>{{ sellinfoList.sellTime }}</span>
+          </div>
+          <div class="mainbox-block">
+            <img src="../../assets/imgs/price.png" alt="" class="messagelogo" />
+            <span>销售金额 :</span><span>{{formatNumberRgx(sellinfoList.sellMoney)+" "+"HKD"}}</span>
+          </div>
+          <div class="mainbox-block">
+            <img src="../../assets/imgs/peoples.png" alt="" class="messagelogo" />
+            <span>客户 :</span><span>{{ sellinfoList.sellCustom }}</span>
+          </div>
+        </div>
+        <div class="payfull">
+          <span>是否全款 :</span>
+          <el-switch style="margin-left: 30px;" v-model="sellPayFull" active-color="#0c7063" disabled>
+          </el-switch>
+        </div>
+        <div class="titlebox" v-if="sellinfoList.sellPayFull == 0">
+          <div class="title-line"></div>
+          <span style="line-height: 22px;">定金</span>
+        </div>
+        <div class="message-mainbox">
+          <div class="mainbox-block">
+            <img src="../../assets/imgs/dates.png" alt="" class="messagelogo" />
+            <span>付款日期 :</span><span>{{ sellinfoList.sellPayTime1 }}</span>
+          </div>
+          <div class="mainbox-block">
+            <img src="../../assets/imgs/price.png" class="messagelogo" />
+            <span>付款金额* :</span><span>{{ formatNumberRgx(sellinfoList.sellPayMoney1)+" "+"HKD" }}</span>
+          </div>
+        </div>
+        <div class="titlebox" v-if="sellinfoList.sellPayFull == 0">
+          <div class="title-line"></div>
+          <span style="line-height: 22px;">尾款</span>
+        </div>
+        <div class="message-mainbox" v-if="sellinfoList.sellPayFull == 0">
+          <div class="mainbox-block">
+            <img src="../../assets/imgs/dates.png" alt="" class="messagelogo" />
+            <span>付款日期 :</span><span>{{ sellinfoList.sellPayTime2 }}</span>
+          </div>
+          <div class="mainbox-block">
+            <img src="../../assets/imgs/price.png" class="messagelogo" />
+            <span>付款金额* :</span><span>{{ formatNumberRgx(sellinfoList.sellPayMoney2)+" "+"HKD" }}</span>
+          </div>
+        </div>
+        <div class="mainbox-block" style="margin-left: 20px;">
+          <img src="../../assets/imgs/update3.png" alt="" class="messagelogo" />
+          <span style="line-height: 22px;">备注 : </span>
+        </div>
+        <div class="message-mainbox">
+          <p>{{sellinfoList.sellNote == '' ? '无' : sellinfoList.sellNote}}</p>
+          <!-- <el-input class="input-style" type="textarea">{{sellinfoList.sellNote}}</el-input>                 -->
+        </div>
+        <div class="titlebox" style="margin-left: 20px;" v-if="config.value!=''">
+          <img src="../../assets/imgs/warehouse.png" alt="" style="background-color: #0c7063;border-radius: 4px;"
+            class="messagelogo">
+          <span style="line-height: 22px;">提货二维码</span>
+        </div>
+        <div class="message-mainbox" v-if="config.value!=''">
+          <div style="text-align: center; margin-top: 40px;" id="faultTree">
+            <vue-qr :logoSrc="config.logo" :text="config.value" :size="150" :margin="0"></vue-qr>
+          </div>
+          <div class="stockoutToken">
+            提货二维码
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+  import VueQr from "vue-qr";
+  export default {
+    components: {
+      VueQr,
+    },
+    data() {
+      return {
+        sellinfoList: "",
+        sellNote: "",
+        sellPayFull: "", // 是否全款   0:非全款 1:全款
+        config: {
+          value: "",
+          logo: ""
+        },
+
+      };
+    },
+    props: ["detailsSale"],
+    mounted() {
+
+      this.sellOrder();
+    },
+    methods: {
+      // 销售单详情
+      sellOrder() {
+        this.sellinfoList = this.detailsSale.sellInfo;
+        console.log(this.sellinfoList);
+        if (this.sellinfoList.sellPayFull == 0) {
+          this.sellPayFull = false;
+        } else {
+          this.sellPayFull = true;
+        }
+        if (this.sellinfoList.sellStockOutToken != undefined) {
+          this.config.value = this.sellinfoList.sellStockOutToken;
+        } else {
+          this.config.value = ""
+        }
+      },
+
+      // 返回上一页面
+      backto() {
+        this.$emit("backbuy", 0);
+      },
+    }
+  };
+</script>
+<style scoped>
+  .Sale-details {
+    width: 100%;
+  }
+
+  .details-content {
+    width: 95%;
+    margin: 0 auto;
+    font-size: 16px;
+    border-radius: 30px;
+    font-family: "微软雅黑";
+  }
+
+  .returnlastpage {
+    width: 75px;
+    height: 45px;
+    margin: 23px;
+    line-height: 45px;
+    padding-top: 18px;
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+
+  .returnlastpage img {
+    width: 30px;
+    height: 25px;
+  }
+
+  .returnlastpage div {
+    margin-top: 5px;
+  }
+
+  .details-contentbox {
+    width: 76%;
+    margin: auto;
+  }
+
+  .message-mainbox {
+    background-color: #fff;
+    border-radius: 30px;
+    padding: 20px 30px;
+    margin-bottom: 24px;
+  }
+
+  .mainbox-block {
+    display: flex;
+    flex-wrap: nowrap;
+    margin: 10px;
+  }
+
+  .mainbox-block img {
+    width: 20px;
+    height: 20px;
+  }
+
+  .titlebox {
+    display: flex;
+    flex-wrap: nowrap;
+    margin: 10px;
+  }
+
+  .title-line {
+    width: 4px;
+    height: 22px;
+    background-color: orange;
+    margin: 0 10px;
+  }
+
+  .payfull {
+    margin-bottom: 20px;
+    margin-left: 20px;
+  }
+
+  .payfull span {
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .input-style {
+    width: 70%;
+  }
+
+  .messagelogo {
+    margin-right: 10px;
+    vertical-align: middle;
+  }
+
+  .el-textarea__inner {
+    height: 120px;
+  }
+
+  .stockoutToken {
+    margin: 40px auto;
+    text-align: center;
+    color: #fff;
+    background-color: #0c7063;
+    border-color: #0c7063;
+    width: 216px;
+    height: 48px;
+    border-radius: 6px;
+    font-size: 16px;
+    line-height: 48px;
+  }
+</style>

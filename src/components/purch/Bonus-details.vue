@@ -1,0 +1,462 @@
+<template>
+  <div class="bonus-details-container">
+    <!-- <h1>分红单详情</h1> -->
+    <div class="back-img" @click="gobackPurchaseList">
+      <div>
+        <img src="../../assets/imgs/goback.png" />
+      </div>
+      <span class="font">返回</span>
+    </div>
+    <div class="purchase-bonus-details-main">
+      <div class="purchase-bonus-details">
+        <div>
+          <p>手表数量</p>
+          <p style="color: red;">{{ purchaseBonusDetails.watchCount }}</p>
+        </div>
+        <div>
+          <p>分红金额</p>
+          <p
+            :style="{
+              color: purchaseBonusDetails.allMoney > 0 ? '#0c7063' : 'red',
+            }"
+          >
+            {{
+              formatNumberRgx(purchaseBonusDetails.allMoney) +
+                " " +
+                purchaseBonusDetails.currency
+            }}
+          </p>
+        </div>
+      </div>
+      <div style="display: flex;justify-content: space-between;">
+        <p>
+          债务抵扣金额：<span>{{
+            formatNumberRgx(purchaseBonusDetails.deductMoney) +
+              " " +
+              purchaseBonusDetails.currency
+          }}</span>
+        </p>
+        <p>
+          打款金额：<span>{{
+            formatNumberRgx(purchaseBonusDetails.payMoney) +
+              " " +
+              purchaseBonusDetails.currency
+          }}</span>
+        </p>
+      </div>
+      <div
+        v-for="(watch, index) in purchaseBonusDetails.watchList"
+        :key="index"
+        class="watch-every-style"
+      >
+        <div class="flex-style">
+          <div style="display: flex;">
+            <div>
+              <img
+                v-image-preview
+                class="img-style"
+                :src="
+                  watch.watchPic == null || watch.watchPic == ''
+                    ? ''
+                    : img + '/img/watch/' + watch.watchPic.split('|')[0]
+                "
+              />
+            </div>
+            <div class="p-style">
+              <p>
+                品牌：<span>{{ watch.watchBrand }}</span>
+              </p>
+              <p>
+                型号：<span>{{ watch.watchModel }}</span>
+              </p>
+              <p>
+                等级：<span>{{ watch.watchLevel }}</span>
+              </p>
+            </div>
+          </div>
+          <div>
+            <el-tooltip
+              class="item"
+              effect="light"
+              content="查看详细信息"
+              placement="top-end"
+            >
+              <img
+                src="../../assets/imgs/details.png"
+                style="cursor: pointer;"
+                @click="disposeWatchDetails(watch.id)"
+              />
+            </el-tooltip>
+            <el-dialog
+              title="手表详情"
+              :visible.sync="dialogDisposeWatchDetailsVisible"
+              center
+            >
+              <div v-if="dialogDisposeWatchDetailsVisible == true">
+                <div
+                  :style="{
+                    color:
+                      purchaseForWatchDetails.profit > 0 ? '#0c7063' : 'red',
+                    margin: '10px 0',
+                    fontSize: '18px',
+                    textAlign: 'center',
+                  }"
+                >
+                  <span>{{
+                    purchaseForWatchDetails.profit > 0 ? "+ " : ""
+                  }}</span>
+                  <span>{{
+                    formatNumberRgx(purchaseForWatchDetails.profit)
+                  }}</span>
+                  <span> {{ purchaseForWatchDetails.currency }}</span>
+                </div>
+                <div>
+                  <p>手表：</p>
+                  <div style="margin-left: 20px;">
+                    <p>
+                      品牌：<span>{{
+                        purchaseForWatchDetails.watch.watchBrand
+                      }}</span>
+                    </p>
+                    <p>
+                      型号：<span>{{
+                        purchaseForWatchDetails.watch.watchModel
+                      }}</span>
+                    </p>
+                    <p>
+                      等级：<span>{{
+                        purchaseForWatchDetails.watch.watchLevel
+                      }}</span>
+                    </p>
+                    <p>
+                      批发价：<span>{{
+                        formatNumberRgx(purchaseForWatchDetails.watch.price) +
+                          " " +
+                          purchaseForWatchDetails.watch.marketCurrency
+                      }}</span>
+                    </p>
+                  </div>
+                </div>
+                <div>
+                  <p>采购：</p>
+                  <div style="margin-left: 20px;">
+                    <p>
+                      采购员：<span>{{
+                        purchaseForWatchDetails.purchase.buyUserNick
+                      }}</span>
+                    </p>
+                    <p>
+                      采购日期：<span>{{
+                        purchaseForWatchDetails.purchase.buyDate
+                      }}</span>
+                    </p>
+                    <p>
+                      机芯号：<span>{{
+                        purchaseForWatchDetails.purchase.buyWatchSn
+                      }}</span>
+                    </p>
+                    <p>
+                      采购价格：
+                      <span>{{
+                        formatNumberRgx(
+                          purchaseForWatchDetails.purchase.buyWatchPrice
+                        ) +
+                          " " +
+                          purchaseForWatchDetails.purchase.buyWatchCurrency
+                      }}</span>
+                      <span
+                        >（
+                        {{
+                          formatNumberRgx(
+                            purchaseForWatchDetails.purchase.buyWatchPriceHkd
+                          ) +
+                            " " +
+                            purchaseForWatchDetails.currency
+                        }}
+                        ）</span
+                      >
+                    </p>
+                    <p>
+                      应退税金额：
+                      <span>{{
+                        formatNumberRgx(
+                          purchaseForWatchDetails.purchase.buyTaxMoney
+                        ) +
+                          " " +
+                          purchaseForWatchDetails.purchase.buyTaxCurrency
+                      }}</span>
+                    </p>
+                    <p>
+                      实退税金额：
+                      <span>{{
+                        formatNumberRgx(
+                          purchaseForWatchDetails.purchase.buyTaxRecvMoney
+                        ) +
+                          " " +
+                          purchaseForWatchDetails.purchase.buyTaxRecvCurrency
+                      }}</span>
+                      <span
+                        >（
+                        {{
+                          formatNumberRgx(
+                            purchaseForWatchDetails.purchase.buyTaxRecvMoneyHkd
+                          ) + purchaseForWatchDetails.currency
+                        }}
+                        ）</span
+                      >
+                    </p>
+                    <p>
+                      小费：
+                      <span>{{
+                        purchaseForWatchDetails.purchase.buyFeeMoney == 0
+                          ? "无"
+                          : formatNumberRgx(
+                              purchaseForWatchDetails.purchase.buyFeeMoney
+                            ) +
+                            " " +
+                            purchaseForWatchDetails.purchase.buyWatchCurrency
+                      }}</span>
+                    </p>
+                    <p>
+                      佣金：
+                      <span>{{
+                        purchaseForWatchDetails.purchase.buyCommMoney == 0
+                          ? "无"
+                          : formatNumberRgx(
+                              purchaseForWatchDetails.purchase.buyCommMoney
+                            ) +
+                            " " +
+                            purchaseForWatchDetails.purchase.buyWatchCurrency
+                      }}</span>
+                    </p>
+                    <p>
+                      物流费：
+                      <span>{{
+                        formatNumberRgx(
+                          purchaseForWatchDetails.purchase.logMoney
+                        ) + purchaseForWatchDetails.currency
+                      }}</span>
+                    </p>
+                    <p>
+                      合计成本：
+                      <span>{{
+                        formatNumberRgx(purchaseForWatchDetails.purchase.cost) +
+                          purchaseForWatchDetails.currency
+                      }}</span>
+                    </p>
+                  </div>
+                </div>
+                <div>
+                  <p>成本：</p>
+                  <div style="margin-left: 20px;">
+                    <p>
+                      核算成本：<span>{{
+                        formatNumberRgx(purchaseForWatchDetails.checkCost) +
+                          purchaseForWatchDetails.currency
+                      }}</span>
+                    </p>
+                  </div>
+                </div>
+                <div>
+                  <p>销售：</p>
+                  <div style="margin-left: 20px;">
+                    <p>
+                      销售金额：<span>{{
+                        formatNumberRgx(purchaseForWatchDetails.sellMoney) +
+                          purchaseForWatchDetails.currency
+                      }}</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div slot="footer">
+                <el-button @click="dialogDisposeWatchDetailsVisible = false"
+                  >取 消</el-button
+                >
+                <el-button
+                  type="primary"
+                  @click="dialogDisposeWatchDetailsVisible = false"
+                  >确 定</el-button
+                >
+              </div>
+            </el-dialog>
+          </div>
+        </div>
+        <div>
+          <div class="flex-style">
+            <p>
+              批发价：<span>{{
+                formatNumberRgx(watch.marketPrice) + " " + watch.marketCurrency
+              }}</span>
+            </p>
+            <p>
+              售价：<span>{{
+                formatNumberRgx(watch.sellMoney) +
+                  " " +
+                  purchaseBonusDetails.currency
+              }}</span>
+            </p>
+            <p>
+              实际成本：<span>{{
+                formatNumberRgx(watch.cost) +
+                  " " +
+                  purchaseBonusDetails.currency
+              }}</span>
+            </p>
+          </div>
+          <div class="flex-style">
+            <p>
+              核算成本：<span
+                :style="{
+                  color: watch.checkCost == watch.cost ? '#000' : 'orange',
+                }"
+                >{{
+                  formatNumberRgx(watch.checkCost) +
+                    " " +
+                    purchaseBonusDetails.currency
+                }}</span
+              >
+            </p>
+            <p>
+              利润：<span>{{
+                formatNumberRgx(watch.profit) +
+                  " " +
+                  purchaseBonusDetails.currency
+              }}</span>
+            </p>
+            <p>
+              分红：
+              <span :style="{ color: watch.money > 0 ? '#0c7063' : 'red' }">{{
+                formatNumberRgx(watch.money) +
+                  " " +
+                  purchaseBonusDetails.currency
+              }}</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      img: this.$store.state.baseUrl,
+      purchaseForWatchDetails: {},
+      dialogDisposeWatchDetailsVisible: false,
+    };
+  },
+  props: {
+    purchaseBonusDetails: {
+      type: Object,
+    },
+  },
+  methods: {
+    // 查看手表详情
+    disposeWatchDetails(id) {
+      this.watchId = id;
+      this.$axios
+        .post(this.$store.state.baseUrl + "/watchInfoBonus?java", {
+          id: this.watchId,
+        })
+        .then((res) => {
+          console.log("获取手表详情");
+          console.log(res);
+          this.purchaseForWatchDetails = res.data;
+          this.dialogDisposeWatchDetailsVisible = true;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    gobackPurchaseList() {
+      this.$emit("purchaseSelect", 0);
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+.bonus-details-container {
+  width: 90%;
+  margin: 0 auto;
+  padding: 20px 30px;
+  background-color: #fff;
+  border-radius: 30px;
+}
+
+.purchase-bonus-details-main {
+  width: 800px;
+
+  .purchase-bonus-details {
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid #ddd;
+
+    div {
+      text-align: center;
+    }
+  }
+
+  .watch-every-style {
+    margin-top: 10px;
+    padding: 0 20px;
+    padding-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+
+    .flex-style {
+      display: flex;
+      justify-content: space-between;
+
+      .p-style {
+        margin-left: 30px;
+
+        p {
+          margin-top: 0;
+        }
+      }
+    }
+  }
+
+  .img-style {
+    width: 100px;
+    height: 100px;
+    margin-left: 15px;
+    border-radius: 30px;
+    object-fit: cover;
+  }
+
+  .debtMsg {
+    margin-top: 10px;
+    padding: 0 20px;
+    border: 1px solid #ddd;
+  }
+}
+
+.back-img {
+  width: 75px;
+  height: 45px;
+  margin-bottom: 30px;
+  line-height: 45px;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+
+  div {
+    margin-top: 5px;
+
+    img {
+      width: 30px;
+      height: 25px;
+    }
+  }
+
+  .font {
+    font-size: 17px;
+  }
+}
+</style>

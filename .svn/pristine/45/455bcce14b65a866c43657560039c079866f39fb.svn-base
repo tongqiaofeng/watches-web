@@ -1,0 +1,1255 @@
+<template>
+    <div class="enterprise" id="enterprise">
+        <div class="enterprisemessage">
+            <div style="line-height: 72px;font-size: 30px;">{{manageIndexlist.name}}</div>
+        </div>
+        <div class="enterprisehead">
+            <div class="deptandstaff">
+                <div class="deptandstaffbutton" :style="{ backgroundColor: rotate == true ? '#d7ebe7' : '#fff'}"
+                    @click='deptListclick'>
+                    <span class="deptandstaffbutton1">部门职位管理</span>
+                    <img src="../../assets/imgs/right.png" class="deptandstaffimg" alt="" :class="[rotate?'go':'aa']" />
+                </div>
+                <div class="deptandstaffbutton" @click='staffListclick'
+                    :style="{ backgroundColor: rotate2 == true ? '#d7ebe7' : '#fff'}">
+                    <span class="deptandstaffbutton1">员工管理</span> <span
+                        v-if="rotate2==false">{{manageIndexlist.staffNum+" "+"人"}}</span> <span v-else>{{" "}}</span>
+                    <img src="../../assets/imgs/right.png" class="deptandstaffimg" alt=""
+                        :class="[rotate2?'go':'aa']" />
+                </div>
+            </div>
+            <div style="background-color: #d7ebd7;width: 100%;height: 1px;"></div>
+        </div>
+        <!-- 部门管理职位管理 -->
+        <div>
+            <div v-show="enterprisenum == 0">
+                <div class="deptboby">
+                    <div style="margin-top: 20px;display: flex;justify-content: space-between;">
+                        <span style="font-size: 20px;margin-left: 10px;">部门列表 ：</span>
+                        <el-button @click="adddeptnum" style="background-color: #d7ebd7;margin-right: 30px;">增加部门
+                        </el-button>
+                        <!-- <img src="../../assets/imgs/peer.png" title="增加部门"
+                            style="width: 32px; height: 32px;vertical-align: middle;cursor: pointer;"
+                           > -->
+                    </div>
+                    <div style="margin-top: 20px;" v-if="total>0">
+                        <table class="table">
+                            <tr class="table-tr">
+                                <th>部门</th>
+                                <th>部门名称</th>
+                                <th>部门人数</th>
+                                <th>操作</th>
+                            </tr>
+                            <tr v-for="(item,index) in deptshow.list" :key="index" class="table-td">
+                                <td>
+                                    <div
+                                        style="background-color: #d7ebd7;width:80px;height: 80px;border-radius: 40px; margin: auto;line-height: 80px;font-size: 20px;font-weight: bold;color: #919090;">
+                                        {{(item.deptName).substring(0,2)}}
+                                    </div>
+                                </td>
+                                <td> {{item.deptName}}</td>
+                                <td> {{item.total}}</td>
+                                <td>
+                                    <img src="../../assets/imgs/update.png" alt="" title="修改该部门信息"
+                                        @click="changedeptmessage(item.id)" style="cursor: pointer;margin:0 20px">
+                                    <img src="../../assets/imgs/myNot.png" title="删除该部门信息"
+                                        @click=Deletedeptmessage(item.id)
+                                        style="cursor: pointer; width: 22px;width: 22px;margin:0 20px">
+                                </td>
+                            </tr>
+                        </table>
+                        <!-- 分页 -->
+                        <div style="width: 100%;height: 50px;">
+                            <div style="margin:15px 0;position:absolute;right:6%;">
+                                <el-pagination @current-change="handleCurrentChange" :current-page="page"
+                                    layout="total, prev, pager, next, jumper" :total="total">
+                                </el-pagination>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else style="background-color: #fff;border-radius: 30px;height: 100px;">
+                        <div style="margin: 20px auto;text-align: center;">
+                            {{msg}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div v-if="enterprisenum==3">
+                <div class="returnlastpage" @click="backto(1)">
+                    <img src="../../assets/imgs/goback.png" />
+                    <span style="font-weight: bold;line-height: 30px;color: #919090;font-size: 18px;">返回</span>
+                </div>
+                <div class="deptmessage">
+                    <div style=" padding: 20px 0;">
+                        <div style="font-size: 18px;margin-left:9%;font-weight: bold;">部门信息 ：</div>
+                        <div class="adddeptmessagebox">
+                            <el-form style="width:80%;margin: 20px auto;">
+                                <div style="display: flex;justify-content: space-between;">
+                                    <div @mouseover="mouseOver" @mouseleave="mouseLeave" @mousedown="mouseDown">
+                                        <el-form-item label="名称 : " required style="display: flex;width: 100%;">
+                                            <el-input v-model="deptname" :trigger-on-focus="false" clearable
+                                                style="width:170%" placeholder="请输入部门名称">
+                                            </el-input>
+                                        </el-form-item>
+                                    </div>
+                                    <el-button v-if="enterprisenumchildren==4" @click="deptSave"
+                                        class="mouseoverchange">修改!
+                                    </el-button>
+                                    <el-button v-if="enterprisenumchildren!=4" @click="adddept()">增加</el-button>
+                                </div>
+                            </el-form>
+                            <div v-if="enterprisenumchildren==4" style="margin:0 20px;width: 94%;">
+                                <!-- 修改部门 -->
+                                <div style="display: flex;justify-content: space-around;">
+                                    <div class="adddeft-staff">
+                                        <span style="margin: 0 10px;">职位 : </span><span>{{deptandjoblist.length+" "+"个"}}</span>
+                                    </div>
+                                    <div class="adddeptbox" @click="addjobnum">
+                                        <img src="../../assets/imgs/cancel.png" alt="" class="adddeptimg">
+                                        <span style="margin-left: 10px;color: #919090;">增加职位</span>
+                                    </div>
+                                </div>
+
+                                <div style="display: flex;flex-wrap: wrap;">
+                                    <div v-for="(item,index) in deptandjoblist" :key="index"
+                                        style="background-color: #f3fbf9;margin: 20px 0 0 20px; width: 30%;border-radius: 10px;">
+                                        <div
+                                            style="margin: 20px 20px 16px;text-align: left;font-weight: bold;font-size: 18px;">
+                                            {{item.jobName}}</div>
+                                        <div style="text-align: left;">
+                                            <span style="margin: 0 10px 0px 20px;font-size: 18px;">{{item.total+" "+"人"}}</span><span style="color: #919090;">在职</span>
+                                        </div>
+                                        <div style="margin: 20px 0;display: flex;">
+                                            <div @click="changejobmessage(item.id)"
+                                                style="font-size: 14px;cursor: pointer;margin:0 20px;"> <img
+                                                    src="../../assets/imgs/update.png" title="修改该职位信息" alt=""
+                                                    @click="changejobmessage(item.id)"
+                                                    style=" width: 12px;height: 12px;"><span>修改职位</span></div>
+                                            <div @click="deletejobmessage(item.id)"
+                                                style="font-size: 14px;cursor: pointer;"> <img
+                                                    src="../../assets/imgs/myNot.png" title="删除该职位信息"
+                                                    @click="deletejobmessage(item.id)"
+                                                    style="width: 12px;height: 12px;"><span>删除职位</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <div v-for="(item,index) in deptandjoblist"
+                                    style="display: flex;justify-content: space-between;">
+                                    <div style="display: flex;margin:0 0 20px 70px;">
+                                        <div style="font-weight: bold;">{{item.jobName}}</div>
+                                        <div style="margin-left: 18px;color: #919090;">{{item.total+" "+"人"}}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <img src="../../assets/imgs/update.png" title="修改该职位信息" alt=""
+                                            @click="changejobmessage(item.id)"
+                                            style="cursor: pointer; width: 17px;height: 17px;">
+                                        <img src="../../assets/imgs/myNot.png" title="删除该职位信息"
+                                            @click="deletejobmessage(item.id)"
+                                            style="cursor: pointer; width: 17px;height: 17px;margin:0 20px">
+                                    </div>
+                                </div> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 添加职位 -->
+            <div v-if="enterprisenum==5">
+                <div class="returnlastpage" @click="backto(2)">
+                    <img src="../../assets/imgs/goback.png" />
+                    <span style="font-weight: bold;line-height: 30px;color: #919090;font-size: 18px;">返回</span>
+                </div>
+                <div class="addstaffmessage">
+                    <!-- 修改职位 -->
+                    <div v-show="enterprisenumchildren == 6||enterprisenumchildren == 7"
+                        style="display: flex;justify-content: space-around; height: 50px; line-height: 50px;padding-top: 20px;">
+                        <div class="changjobbutton" :style="{backgroundColor:isjobbutton==true? '#fff':'#d7ebe7'}"
+                            @click="jobbuttonMessage">
+                            <span class="deptandstaffbutton1">信息</span>
+                        </div>
+                        <div class="changjobbutton" :style="{backgroundColor:isjobbutton==false ?'#fff':'#d7ebe7'}"
+                            @click="jobbuttonstaff">
+                            <span class="deptandstaffbutton1">员工</span>
+                        </div>
+                    </div>
+                    <!-- 信息 -->
+                    <div style=" padding: 20px 0;" v-if="showjobauthority==1">
+                        <div style="font-size: 18px;margin-left:9%;font-weight: bold;">职位信息 : </div>
+                        <div class="addstaffmessagebox">
+                            <el-form style="width:58%;margin: 20px auto 0;">
+                                <el-form-item label="职位名称 : " required>
+                                    <el-input style="width: 86%;" v-model="jobname" :trigger-on-focus="false" clearable
+                                        placeholder="请输入职位">
+                                    </el-input>
+                                </el-form-item>
+                            </el-form>
+                            <div style="width:58%;margin: 0 auto;">
+                                <div class="addstffbox">
+                                    <span style="margin-right: 20px; font-size: 20px;font-weight: bold;">权限 </span>
+                                    <div style="margin-left: 16px;" v-for="items in authorityGroupList"
+                                        :key="items.id">
+                                        <div style="margin:10px;font-size:18px;">{{items.name}}</div>
+                                        <div style="display: flex;flex-wrap: wrap; font-size: 16px;margin-left: 8px;">
+                                            <el-checkbox-group v-model="jurisdictionjobarr">
+                                                <el-checkbox v-for="list in authorityList" :label="list.id"
+                                                    @change="depetjobchange" v-show="list.groupId==items.id"
+                                                    :key="list.id">{{list.name}}
+                                                </el-checkbox>
+                                            </el-checkbox-group>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="margin: 4%;">
+                                <el-button class="savebutton" @click="jobsavebutton">保存</el-button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 员工 -->
+                    <!-- 修改---员工 -->
+                    <div v-else style=" padding: 20px 0;">
+                        <div class="addstaffmessagebox">
+                            <div class="addstaffbox" @click="addstaff(2)">
+                                <img src="../../assets/imgs/cancel.png" alt="" class="addstaffimg">
+                                <span style="margin-left: 10px;color: #919090;">增加员工</span>
+                            </div>
+                            <table style=" width: 80%;margin: auto;" v-if="deptjobstaff.staffList.length!==0">
+                                <tr>
+                                    <th>员工昵称</th>
+                                    <th>在职状态</th>
+                                    <th>操作</th>
+                                </tr>
+                                <tr v-for="(item,index) in deptjobstaff.staffList" :key="index"
+                                    style=" line-height: 40px;height: 40px;">
+                                    <td>
+                                        <span>{{item.nick}}</span>
+                                    </td>
+                                    <td><span v-if="item.flag==1">在职</span><span v-else>离职</span></td>
+                                    <td @click="changestaffmsg(item.id)" style="cursor: pointer;"><img src="../../assets/imgs/update.png" alt="" 
+                                            title="修改员工信息" style="width: 17px;height: 17px;vertical-align: middle;"><span style="margin:0 10px;">修改</span>
+                                        <img src="../../assets/imgs/right.png" alt=""
+                                            style="width: 14px;">
+                                    </td>
+                                </tr>
+                            </table>
+                            <div v-else style="margin: 20px auto;">该职位暂无员工</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 员工管理 -->
+        <div>
+            <div class=" changetable" v-if="enterprisenum==1">
+                <div class="bobychecked" id="bobychecked">
+                    <div class="cheakedbox" id="cheakedbox">
+                        <el-checkbox v-model="checked1" @change="workingCondition" class="el-checkbox__label">在职
+                        </el-checkbox>
+                        <el-checkbox v-model="checked2" @change="workingCondition" class="el-checkbox__label">离职
+                        </el-checkbox>
+                    </div>
+                    <div style="width: 48%;display: flex;justify-content: flex-end;">
+                        <span style="line-height:40px ;    font-size: 14px;color: #919090;">{{"员工人数 : "+" "+Staff.total
+                            +"人"}}</span>
+                        <img src="../../assets/imgs/peer.png" title="添加员工信息"
+                            style="width: 32px; height: 32px;vertical-align: middle;margin: 0 20px 0 60px;cursor: pointer;"
+                            @click="addstaff(1)">
+                    </div>
+                </div>
+                <div class="enterpriseboby" v-if="Staff.total>0">
+                    <table class="table">
+                        <tr class="table-tr">
+                            <th>昵称</th>
+                            <th>部门名称</th>
+                            <th>职位名称</th>
+                            <th>操作</th>
+                        </tr>
+                        <tr v-for="(item,index) in StaffList" :key="index" class="table-td"
+                            :style="{color:item.flag==0?'#919090' :'black'}">
+                            <td>{{item.nick}}</td>
+                            <td v-if="item.deptList.length>0">
+                                <span v-for="(items,indexs) in item.deptList" :key="indexs" style="margin-right: 10px;">
+                                    {{items.deptName}}</span>
+                            </td>
+                            <td v-else>暂无信息</td>
+                            <td v-if="item.deptList.length>0">
+                                <span v-for="(items,indexs) in item.deptList" :key="indexs"
+                                    style="margin-right: 10px;">{{items.jobName}}</span>
+                            </td>
+                            <td v-else>暂无信息</td>
+                            <td>
+                                <img src="../../assets/imgs/update.png" alt="" title="修改该员工信息"
+                                    @click="seeinformation(item)" style="cursor: pointer;margin:0 20px">
+                                <img src="../../assets/imgs/myNot.png" title="删除该员工信息" @click="Deletestaff(item.id)"
+                                    style="cursor: pointer; width: 22px;width: 22px;margin:0 20px">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div v-else style="background-color: #fff;border-radius: 30px;height: 100px;">
+                    <div style="margin:40px auto;text-align: center;line-height: 100px;">{{msg}}</div>
+                </div>
+                <!-- 分页 -->
+                <div style="width: 100%;height: 50px;">
+                    <div style="margin:15px 0;position:absolute;right:6%;">
+                        <el-pagination @current-change="handleCurrentChange" :current-page="page"
+                            layout="total, prev, pager, next, jumper" :total="total">
+                        </el-pagination>
+                    </div>
+                </div>
+            </div>
+            <!-- 员工管理--修改增加页面 -->
+            <div v-if="enterprisenum==2">
+                <div class="returnlastpage" @click="backto(3)" v-if="deptback==true">
+                    <img src="../../assets/imgs/goback.png" />
+                    <span style="font-weight: bold;line-height: 30px;color: #919090;font-size: 18px;">返回</span>
+                </div>
+                <div @click="backto(4)" v-else class="returnlastpage">
+                    <img src="../../assets/imgs/goback.png" />
+                    <span style="font-weight: bold;line-height: 30px;color: #919090;font-size: 18px;">返回</span>
+                </div>
+                <div class="addstaffmessage">
+                    <div style=" padding: 20px 0;">
+                        <div style="font-size: 18px;margin-left:9%;font-weight: bold;">职位信息 : </div>
+                        <div class="addstaffmessagebox">
+                            <el-form style="width:58%;margin: 20px auto;">
+                                <el-form-item label="账号 : " required>
+                                    <el-input style="width: 86%;" v-model="usernum" :trigger-on-focus="false" clearable
+                                        placeholder="请输入账号">
+                                    </el-input>
+                                </el-form-item>
+                                <el-form-item label="密码 : " required>
+                                    <el-input style="width: 86%;" v-model="userpsw" :trigger-on-focus="false" clearable
+                                        placeholder="TopTime888">
+                                    </el-input>
+                                </el-form-item>
+                                <el-form-item label="昵称 : " required>
+                                    <el-input style="width: 86%;" v-model="username" :trigger-on-focus="false" clearable
+                                        placeholder="">
+                                    </el-input>
+                                </el-form-item>
+                                <div style="width: 100%;text-align: left;">
+                                    <span style="color: red;">*</span>
+                                    <span style="margin-right: 30px;font-size: 18px;" required> 在职状态 : </span>
+                                    <el-radio v-model="radio" label="1">在职</el-radio>
+                                    <el-radio v-model="radio" label="0">离职</el-radio>
+                                </div>
+                            </el-form>
+                            <div style="width:58%;margin: 0 auto;">
+                                <div class="addstffbox">
+                                    <div style="font-size: 20px;font-weight: bold;"> 职位 ： </div>
+                                    <div v-for="(item,index) in deptListdata" :key="index">
+                                        <div class="department">{{item.deptName}}</div>
+                                        <div class="position">
+                                            <div v-for="(jobnames,num) in item.jobList" :key="num"
+                                                style="margin-right: 10%;">
+                                                <el-checkbox-group v-model="jobnamearr" @change="jobnamefun">
+                                                    <el-checkbox :label="jobnames.id" class="el-checkbox__label">
+                                                        {{jobnames.jobName}}
+                                                    </el-checkbox>
+                                                </el-checkbox-group>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div v-if="showwarehouseList==true" class="addstffbox">
+                                    <el-form>
+                                        <el-form-item label="管理仓库:" style="display: flex;margin: 10px 0;">
+                                            <el-select v-model="warehouseListid" filterable placeholder="请选择仓库"
+                                                style="width: 90%;">
+                                                <el-option v-for="(item,index) in WarehouseList" :key="index"
+                                                    :label="item.name" :value="item.id" style="width: 500px;">
+                                                </el-option>
+                                            </el-select>
+                                        </el-form-item>
+                                    </el-form>
+                                </div>
+                                <div class="addstffbox">
+                                    <span style="margin-right: 20px; font-size: 20px;font-weight: bold;">权限 ：</span>
+                                    <div style="margin-left: 16px;" v-for="items in authorityGroupList"
+                                        :key="items.id">
+                                        <div style="margin:10px;font-size: 20px;">{{items.name}}</div>
+                                        <div style="display: flex;flex-wrap: wrap; font-size: 16px;margin-left: 20px;">
+                                            <el-checkbox-group v-model="jurisdictionarr">
+                                                <el-checkbox v-for="list in authorityList" :label="list.id"
+                                                    v-show="list.groupId==items.id" disabled :key="list.id"
+                                                    :value="list.name">{{list.name}}</el-checkbox>
+                                            </el-checkbox-group>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="margin: 4%; ">
+                                <el-button class="savebutton" @click="savebutton">保存</el-button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        data() {
+            return {
+                pageNum: 10,
+                page: 1,
+                flag: 2,
+                total: 0,
+                rotate: true,
+                rotate2: false,
+                StaffList: "",
+                deptname: "",
+                usernum: "",
+                userpsw: "",
+                username: "",
+                checked1: true,
+                checked2: true,
+                isjobbutton: false,
+                deptback: false,
+                msg: "",
+                enterprisenum: "", //0部门职位管理，1员工管理，2员工增加修改，3部门增加（enterprisenumchildren=4部门修改）,5职位增加（enterprisenumchildren=6职位修改（enterprisenumchildren=7职位--员工---跳转至2）
+                enterprisenumchildren: "",
+                radio: "1",
+                Staff: "",
+                staffid: "",
+                isstaff: "",
+                isjobnamefun: false,
+                manageIndexlist: "",
+                mouseclick: false,
+                showwarehouseList: false,
+                warehouseListid: "",
+                WarehouseList: "",
+                deptListjosn: "",
+                deptListdata: "",
+                deptshow: "",
+                deptandjoblist: "",
+                deptid: "",
+                deptjobstaff: "",
+                deptval: [],
+                arryauthority: [],
+                authorityLists: [],
+                authorityList: [],
+                authorityGroupList: [],
+                jobname: "",
+                jobnamearr: [],
+                jobnameid: "",
+                jurisdictionarr: [],
+                jurisdictionjobarr: [],
+                showjobauthority: "",
+                jobaddstaff: "",
+                jobauthority: [],
+            };
+        },
+        mounted() {
+            this.Warehouse();
+            this.authorityGroupList = JSON.parse(sessionStorage.getItem('authorityGroupList'))
+            this.authorityList = JSON.parse(sessionStorage.getItem('authorityList'))
+            this.mounteddeptlist();
+            this.manageIndex();
+        },
+        methods: {
+            mouseOver() {
+                if (this.enterprisenumchildren == 4) {
+                    document.getElementsByClassName("mouseoverchange")[0].style.backgroundColor = "#0C860C"
+                }
+            },
+            mouseLeave() {
+                if (this.mouseclick == false && this.enterprisenumchildren == 4) {
+                    document.getElementsByClassName("mouseoverchange")[0].style.backgroundColor = "#FFF"
+                }
+            },
+            mouseDown() {
+                if (this.enterprisenumchildren == 4) {
+                    document.getElementsByClassName("mouseoverchange")[0].style.backgroundColor = "#0C860C";
+                    this.mouseclick = true;
+                }
+            },
+            manageIndex() {
+                this.$axios
+                    .post(this.$store.state.baseUrl + "/manageIndex").then((res) => {
+                        this.manageIndexlist = res.data
+                        this.deptListdata = res.data.deptList //获取所有部门-职位信息
+                        console.log(res.data);
+                    })
+            },
+            deptListclick() { //部门职位管理
+                this.page = 1;
+                this.enterprisenum = 0;
+                this.isjobbutton = false;
+                this.rotate = true;
+                if (this.rotate2 == true) {
+                    this.rotate2 = !this.rotate2;
+                }
+                console.log(this.rotate);
+                this.mounteddeptlist();
+                this.manageIndex()
+            },
+            staffListclick() { //员工管理
+                this.page = 1;
+                this.enterprisenum = 1;
+                this.isjobbutton = false;
+                this.rotate2 = true;
+                if (this.rotate == true) {
+                    this.rotate = !this.rotate;
+                }
+                console.log(this.rotate2);
+                this.flag = 2
+                this.mountedstaffList()
+            },
+            mounteddeptlist() { //初始化展示部门列表
+                this.$axios
+                    .post(this.$store.state.baseUrl + "/deptList", {
+                        page: this.page,
+                        pageNum: this.pageNum,
+                    }).then((res) => {
+                        this.deptshow = res.data;
+                        this.total = res.data.list.length;
+                        if (this.total <= 0) {
+                            this.msg = "暂无数据"
+                        }
+                        console.log(res.data);
+                    })
+            },
+            mountedstaffList() { //初始化展示员工列表
+                this.$axios
+                    .post(this.$store.state.baseUrl + "/staffList", {
+                        flag: this.flag,
+                        page: this.page,
+                        pageNum: this.pageNum,
+                    })
+                    .then((res) => {
+                        this.Staff = res.data;
+                        this.StaffList = res.data.list;
+                        this.total = res.data.total;
+                        if (this.Staff.total == 0) {
+                            this.msg = "啊哦~暂无数据"
+                        }
+                        console.log(this.Staff);
+                    });
+            },
+            choosecheaked() {
+                if (this.checked1 == true && this.checked2 == true) { //复选框选择  在职--离职
+                    this.flag = 2
+                } else if (this.checked1 == true && this.checked2 == false) {
+                    this.flag = 1
+                } else if (this.checked1 == false && this.checked2 == true) {
+                    this.flag = 0
+                } else if (this.checked1 == false && this.checked2 == false) {
+                    this.flag = "";
+                    this.checked1 = true;
+                    this.checked2 = true;
+                    this.message(2, "请选择职位状态")
+                }
+                this.mountedstaffList();
+            },
+            //部门职位管理
+            backto(val) {
+                if (val == 1) {
+                    this.enterprisenum = 0;
+                    this.mounteddeptlist();
+                    this.manageIndex()
+                } else if (val == 2) {
+                    this.enterprisenum = 3;
+                    this.enterprisenumchildren = 4;
+                    this.deptback = false; //部门职位管理下的返回
+                    console.log(this.deptid);
+                    this.changedeptmessage(this.deptid)
+                } else if (val == 3) {
+                    this.enterprisenum = 5;
+                    this.enterprisenumchildren = 7;
+                    this.isjobbutton = true;
+                } else if (val == 4) {
+                    this.enterprisenum = 1;
+                }
+            },
+            adddeptnum() { //增加部门按钮--入口
+                this.enterprisenum = 3;
+                this.deptname = "";
+                this.enterprisenumchildren = 100;
+            },
+            adddept() { //添加部门--确定按钮
+                console.log(this.deptname);
+                this.deptid = "";
+                this.deptSave();
+            },
+            changedeptmessage(val) { //"修改该部门信息
+                this.deptid = val;
+                this.enterprisenum = 3;
+                this.enterprisenumchildren = 4;
+                this.$axios
+                    .post(this.$store.state.baseUrl + "/deptInfo", {
+                        id: val
+                    })
+                    .then((res) => {
+                        this.deptid = res.data.id //传--修改部门
+                        this.deptname = res.data.deptName;
+                        this.deptnametemp = res.data.deptName; //点击修改部门，把部门名称放入暂存
+                        this.deptandjoblist = res.data.jobList;
+                        this.jurisdictionjobarr = [];
+                        console.log(this.deptandjoblist);
+                    })
+
+            },
+            deptSave() { //增加---修改部门接口
+                this.$axios
+                    .post(this.$store.state.baseUrl + "/deptSave", {
+                        id: this.deptid, //传为修改，不传为增加
+                        deptName: this.deptname
+                    })
+                    .then((res) => {
+                        console.log(this.deptname);
+                        console.log(res.data);
+                        this.mouseclick = false;
+                        this.mounteddeptlist();
+                        if (this.deptid == "") {
+                            this.enterprisenum = 0;
+                            this.message(1, "成功增加部门")
+                        } else if (this.deptid !== "" && this.deptnametemp == this.deptname) {
+                            this.message(2, "部门名称未有变化")
+                        } else if (this.deptid !== "" && this.deptnametemp !== this.deptname) {
+                            this.enterprisenum = 0;
+                            this.message(1, "成功修改部门名称")
+                        }
+
+                    })
+            },
+            Deletedeptmessage(val) { //删除该部门信息
+                this.$axios
+                    .post(this.$store.state.baseUrl + "/deptDelete", {
+                        id: val
+                    })
+                    .then((res) => {
+                        this.message(1, "删除成功")
+                        this.enterprisenum = 0;
+                        this.mounteddeptlist(); //刷新部门列表
+                    }).catch((res) => {
+                        this.message(2, res.data.message)
+                    })
+            },
+            addjobnum() { //增加职位
+                this.enterprisenum = 5;
+                this.showjobauthority = 1;
+                this.jobid = ""; //不传--新增
+                this.jobname = "";
+                this.jurisdictionjobarr = [];
+            },
+            changejobmessage(jobid, val) { //修改该职位信息
+                this.$axios
+                    .post(this.$store.state.baseUrl + "/jobInfo", {
+                        id: jobid,
+                    })
+                    .then((res) => {
+                        this.deptjobstaff = res.data;
+                        this.jobid = jobid; //传--修改
+                        if (val == 1) {
+                            this.enterprisenum = 5;
+                            this.enterprisenumchildren = 7;
+                            this.isjobbutton = true;
+                        } else {
+                            this.enterprisenum = 5;
+                            this.enterprisenumchildren = 6;
+                            this.showjobauthority = 1;
+                            this.isjobbutton = false;
+                        }
+                        this.deptback = false;
+                        this.jobname = this.deptjobstaff.jobName;
+                        this.jobnameid = this.deptjobstaff.id;
+                        this.authoritytemp = res.data.authority;
+                        console.log(res.data.authority);
+                        this.authorityList.forEach(element => {
+                            if (this.deptjobstaff.authority.split("|")[element.id - 1] == 1) { //进入修改页面，展示原有的权限
+                                this.jurisdictionjobarr.push(element.id) //v-model的数据
+                                this.jobauthority.splice(element.id - 1, 1, 1)
+                            }
+                        });
+                        this.arr(this.jurisdictionjobarr)
+                    })
+            },
+            depetjobchange() { //权限选择修改
+                this.authorityList.forEach(element => {
+                    this.jobauthority.push(0)
+                });
+                this.authorityList.forEach(e => {
+                    this.jurisdictionjobarr.forEach(element => {
+                        if (e.id == element) {
+                            this.jobauthority.splice((element - 1), 1, 1);
+                            console.log(element + "///" + e.id);
+                        }
+                    });
+                });
+                console.log(this.jobauthority);
+            },
+            jobsavebutton() { //保存职位
+                console.log(this.jobauthority);
+                this.$axios
+                    .post(this.$store.state.baseUrl + "/jobSave", {
+                        deptId: this.deptid, //传为修改，不传为增加
+                        id: this.jobid, //传为修改，不传为增加
+                        jobName: this.jobname,
+                        authority: this.jobauthority.join("|")
+                    })
+                    .then((res) => {
+                        this.changedeptmessage(this.deptid); //刷新页面   
+                        this.manageIndex();
+                        console.log(res.data);
+                    })
+                console.log(this.jobauthority.join("|"));
+                console.log(this.deptid + "=====(" + this.jobid + ")=====" + this.jobname);
+
+            },
+            deletejobmessage(val) { //删除该职位信息
+                this.$axios
+                    .post(this.$store.state.baseUrl + "/jobDelete", {
+                        id: val
+                    }).then((res) => {
+                        this.message(1, "成功删除职位")
+                        this.changedeptmessage(this.deptid); //刷新页面
+                        console.log(res.data);
+                    }).catch((res) => {
+                        this.message(2, res.data.message)
+                    })
+            },
+            jobbuttonMessage() { //部门职位管理--信息
+                this.isjobbutton = false;
+                this.showjobauthority = 1;
+            },
+            jobbuttonstaff() { //部门职位管理--员工
+                this.isjobbutton = true;
+                this.showjobauthority = 100;
+                this.enterprisenumchildren = 7;
+            },
+            changestaffmsg(val) { //部门职位管理--员工--修改员工信息
+                this.staffid = val;
+                this.deptback = true;
+                this.isstaff = true;
+                this.isjobnamefun = false;
+                this.jobaddstaff = true;
+                this.jobnamearr = [];
+                this.jurisdictionarr = [];
+                this.arryauthority = [];
+                this.deptval = [];
+                this.enterprisenum = 2; //跳转至---修改员工
+                this.deptList(1);
+            },
+            //----员工管理-------
+            workingCondition() { //在职状态复选框
+                this.page = 1;
+                this.choosecheaked();
+            },
+            addstaff(val) { //增加员工
+                this.enterprisenum = 2; //进入员工增加、修改页面
+                this.isstaff = false;
+                this.staffid = "";
+                this.usernum = "";
+                this.username = "";
+                this.userpsw = "";
+                this.warehouseListid = "";
+                this.jobnamearr = [];
+                this.jurisdictionarr = [];
+                if (val == 2) {
+                    this.deptback = true;
+                    this.jobaddstaff = true;
+                    this.jobnamearr.push(this.jobnameid) //部门--职位--员工，新增固定职位员工
+                } else { //增加员工按钮进入
+                    this.deptback = false;
+                    this.jobaddstaff = false;
+                    this.isjobnamefun = true;
+                    this.jurisdictionarr = [];
+                }
+                this.deptval = [];
+                this.showwarehouseList = false;
+                this.manageIndex(); //职位
+                this.stafffunction(); //权限
+            },
+            seeinformation(item) { //修改员工信息
+                this.staffid = item.id;
+                this.jobaddstaff = false;
+                this.jobnamearr = []; //清空之前的数组
+                this.isstaff = true;
+                this.isjobnamefun = false;
+                this.deptback = false; //控制返回的显示
+                this.enterprisenum = 2; //进入员工增加、修改页面
+                this.userpsw = "";
+                this.warehouseListid = "";
+                this.deptList();
+            },
+            deptList(val) { //员工列表
+                console.log("职位jobIds" + this.jobnamearr);
+                console.log("增加/修改" + this.staffid);
+                this.$axios
+                    .post(this.$store.state.baseUrl + "/staffInfo", {
+                        id: this.staffid
+                    })
+                    .then((res) => {
+                        this.deptListjosn = res.data
+                        this.jurisdictionarr = [];
+                        this.usernum = this.deptListjosn.user; //----修改时，显示选中员工昵称
+                        this.username = this.deptListjosn.nick;
+                        if (this.deptListjosn.flag == 1) { //根据flag显示职位状态
+                            this.radio = "1";
+                        } else if (this.deptListjosn.flag == 0) {
+                            this.radio = "0"
+                        }
+                        if (this.deptListjosn.warehouseId == 0) { //没有权限不展示仓库
+                            this.showwarehouseList = false
+                        } else {
+                            this.showwarehouseList = true
+                            this.warehouseListid = this.deptListjosn.warehouseId; //展示该员工管辖的仓库
+                        }
+                        this.deptListjosn.jobIdList.forEach(e => {
+                            this.jobnamearr.push(e)
+                        });
+                        this.flag = this.radio;
+                        console.log("/staffInfo员工列表" + this.isstaff + "--" + this.isjobnamefun);
+                        this.stafffunction(val)
+                    })
+            },
+            stafffunction(val) { //员工职位-权限显示
+                if (this.isstaff == true && this.isjobnamefun == false) { //修改员工信息
+                    console.log("修改员工信息");
+                    console.log(this.deptval);
+                    if (this.deptval.length == 0) { //未点击复选框
+                        for (let i = 0; i < this.deptListdata.length; i++) {
+                            for (let j = 0; j < this.deptListdata[i].jobList.length; j++) {
+                                for (let k = 0; k < this.deptListjosn.jobIdList.length; k++) {
+                                    if (this.deptListdata[i].jobList[j].id == this.deptListjosn.jobIdList[k]) { //展示员工职位
+                                        this.arryauthority.push(this.deptListdata[i].jobList[j].authority) //拿到权限对象数组
+                                    }
+                                }
+                            }
+                        }
+                        console.log(this.arryauthority);
+                        this.arryauthority.forEach(e => {
+                            e.split("|").forEach((element, index) => {
+                                if (element == 1) {
+                                    this.jurisdictionarr.push(index + 1); //展示权限
+                                }
+                            });
+                        });
+                    } else { //点击复选框后
+                        this.jurisdictionarr = this.deptval
+                    }
+                } else if (this.isstaff == false) { //增加员工信息
+                    console.log(this.jobnamearr.length + "{%%%%%%%%%%%%%%%%%%%%%" + this.isjobnamefun);
+                    console.log(this.deptval);
+                    console.log(this.authorityList);
+                    if (this.deptback == true) { //固定职位状态
+                        for (let n = 0; n < this.authoritytemp.split('|').length; n++) {
+                            if (this.authoritytemp.split('|')[n] == 1) {
+                                this.deptval.push(n + 1)
+                            }
+                        }
+                        console.log(this.deptval);
+                    }
+                    this.jurisdictionarr = this.deptval;
+                }
+                if (this.jobnamearr.length == 0) {
+                    this.arryauthority = [];
+                    this.deptval = [];
+                    this.jurisdictionarr = [];
+                }
+                this.arr(this.jurisdictionarr)
+                this.arr(this.jobnamearr) //去重
+                console.log(this.jurisdictionarr);
+                console.log(this.jobnamearr + "-----");
+            },
+            jobnamefun() { //职位选择/修改
+                console.log("部门  " + this.jobnamearr);
+                this.arryauthority = [];
+                this.deptval = [];
+                this.jurisdictionarr = [];
+                for (let i = 0; i < this.deptListdata.length; i++) {
+                    for (let j = 0; j < this.deptListdata[i].jobList.length; j++) {
+                        if (this.jobnamearr.indexOf(this.deptListdata[i].jobList[j].id) !== -1) { //判断职位，拿出该职位的权限
+                            console.log("有" + "-----" + i + j);
+                            this.arryauthority.push(this.deptListdata[i].jobList[j].authority); //权限数组
+                        }
+                    }
+                }
+                this.arryauthority.forEach((element, num) => {
+                    for (let a = 0; a < element.split('|').length; a++) {
+                        if (element.split('|')[a] == 1) {
+                            this.deptval.push(a + 1) //取出权限为1的位置
+                        }
+                    }
+                });
+                console.log(this.arryauthority);
+                console.log(this.deptval);
+                if (this.deptval.indexOf(20 || 21 || 22) == -1 || this.deptval.length == 0) {
+                    this.showwarehouseList = false; //判断有无仓库权限
+                    this.warehouseListid = 0;
+                } else {
+                    this.showwarehouseList = true;
+                }
+                console.log(this.showwarehouseList);
+                this.stafffunction()
+            },
+            savebutton() { //修改/新增员工--保存按钮
+                this.flag = this.radio;
+                console.log(this.staffid + "---" + this.usernum + "---" + this.userpsw + "---" + this.username + "---" + this.flag + "---" + this.jobnamearr + "仓库" + this.warehouseListid);
+                this.arr(this.jobnamearr)
+                this.$axios
+                    .post(this.$store.state.baseUrl + "/staffSave", {
+                        id: this.staffid,
+                        user: this.usernum,
+                        psw: this.userpsw,
+                        nick: this.username,
+                        flag: this.flag,
+                        warehouseId: this.warehouseListid,
+                        jobIdList: this.jobnamearr,
+                    })
+                    .then((res) => {
+                        console.log(res.data);
+                        if (this.jobaddstaff == false) {
+                            this.staffListclick() //员工管理tabel进入  短路径
+                        } else {
+                            this.showjobauthority = 100;
+                            this.changejobmessage(this.jobid, 1)
+                        }
+                    }).catch((e) => {
+                        this.message(2, e.data.message)
+                    })
+            },
+            Deletestaff(val) { //删除员工
+                console.log(val);
+                this.$axios
+                    .post(this.$store.state.baseUrl + "/staffDelete", {
+                        id: val
+                    })
+                    .then((res) => {
+                        console.log(res.data);
+                        this.message(1, "删除成功")
+                        if (parseInt(this.Staff.total / 10) + 1 == this.page) { //防止空显示
+                            this.page = this.page - 1;
+                        }
+                        this.mountedstaffList() //刷新员工列表
+                    }).catch((res) => {
+                        console.log(res.data);
+                        this.message(2, res.data.message)
+                    })
+            },
+            // 分页
+            handleCurrentChange(val) {
+                console.log(`当前页: ${val}`);
+                this.page = val;
+                if (this.rotate2 == true) {
+                    this.mountedstaffList()
+                } else {
+                    this.mounteddeptlist()
+                }
+            },
+            //所有仓库
+            Warehouse() {
+                this.$axios
+                    .post(this.$store.state.baseUrl + "/WarehouseGet")
+                    .then((res) => {
+                        this.WarehouseList = res.data
+                    })
+            },
+            arr(result) { //去重
+                return Array.from(new Set(result))
+            },
+            message(val, res) { //消息提示
+                if (val == 1) {
+                    this.$message.success({
+                        message: res,
+                        showClose: true,
+                        duration: 2000,
+                    });
+                } else if (val == 2) {
+                    this.$message.warning({
+                        message: res,
+                        showClose: true,
+                        duration: 3000,
+                    });
+                }
+
+            }
+        }
+    };
+</script>
+
+<style lang="scss" scoped>
+    #enterprise {
+        width: 90%;
+        margin: auto;
+        .enterprisehead {
+            /* background-color: #fff; */
+            border-radius: 30px;
+            .enterprisemessage {
+                padding: 16px 16px 0;
+                display: flex;
+            }
+            .deptandstaff {
+                display: flex;
+                .deptandstaffbutton {
+                    height: 50px;
+                    font-size: 20px;
+                    width: 30%;
+                    line-height: 50px;
+                    text-align: center;
+                    /* margin: 0 auto 20px; */
+                    display: inline-block;
+                    cursor: pointer;
+                    border-radius: 2px;
+                    .deptandstaffbutton1 {
+                        margin-right: 30px;
+                    }
+                    .deptandstaffimg {
+                        width: 14px;
+                        height: 14px;
+                        vertical-align: middle;
+                        margin-left: 14%;
+                    }
+                }
+            }
+        }
+        .deptmessage {
+            background-color: #fff;
+            border-radius: 30px;
+            width: 90%;
+            .adddeptmessagebox {
+                text-align: center;
+                padding: 20px 0;
+                border-radius: 10px;
+                border: 1px solid #919090;
+                width: 64%;
+                margin: 20px 9%;
+                text-align: center;
+                .el-button {
+                    background-color: #0c860c;
+                    color: #fff;
+                }
+                .mouseoverchange {
+                    color: #fff;
+                    border: none;
+                    background-color: #fff;
+                }
+                .adddeptimg {
+                    width: 18px;
+                    height: 18px;
+                    vertical-align: middle;
+                    transform: rotate(45deg);
+                }
+            }
+            .adddeft-staff {
+                text-align: left;
+                font-size: 20px;
+                line-height: 40px;
+            }
+            .adddeptbox {
+                width: 16%;
+                height: 40px;
+                line-height: 40px;
+                border-radius: 8px;
+                background-color: #d7ebe7;
+                cursor: pointer;
+                font-size: 18px;
+                font-weight: bold;
+                color: #919090;
+            }
+            .adddeptbox:hover {
+                background-color: #d7ebd7;
+                color: #fff;
+            }
+        }
+        .addstaffmessage {
+            background-color: #fff;
+            border-radius: 30px;
+            .addstaffmessagebox {
+                text-align: center;
+                padding: 20px 0;
+                border-radius: 10px;
+                border: 1px solid #919090;
+                width: 64%;
+                margin: 20px auto;
+                .savebutton {
+                    margin-left: 60%;
+                    width: 170px;
+                    background-color: #d7ebe7;
+                    color: #919090;
+                }
+                .savebutton:hover {
+                    background-color: #0c850c;
+                    color: #fff;
+                }
+            }
+            .addstffbox {
+                width: 100%;
+                text-align: left;
+                margin-top: 20px;
+                .department {
+                    margin: 10px 20px;
+                    font-size: 18px;
+                }
+                .position {
+                    margin-left: 30px;
+                    display: flex;
+                }
+            }
+        }
+        .enterpriseboby {
+            background-color: #fff;
+            border-radius: 30px;
+            margin: 20px auto;
+        }
+        #bobychecked {
+            width: 98%;
+            margin: 20px auto 0;
+            display: flex;
+            justify-content: space-around;
+            #cheakedbox {
+                width: 52%;
+                justify-content: space-around;
+                display: flex;
+            }
+        }
+        .table-tr {
+            height: 40px;
+            line-height: 40px;
+            border-bottom: 0;
+        }
+        table>tr {
+            text-align: center;
+        }
+        .enterpriseboby table>tr>td {
+            background-color: #f3fbf9;
+            border-bottom: 1px solid #d7ebe7;
+            padding: 20px;
+            width: 33%;
+        }
+        table tr:first-child th:first-child {
+            border-top-left-radius: 10px;
+            /* 设置table左上圆角 */
+        }
+        table tr:first-child th:last-child {
+            border-top-right-radius: 10px;
+            /* 设置table右上圆角 */
+        }
+        table tr:last-child td:first-child {
+            border-bottom-left-radius: 10px;
+            /* 设置table左下圆角 */
+        }
+        table tr:last-child td:last-child {
+            border-bottom-right-radius: 10px;
+            /* 设置table右下圆角 */
+        }
+        .changjobbutton {
+            border-radius: 16px;
+            width: 30%;
+            text-align: center;
+            cursor: pointer;
+        }
+        .addstaffbox {
+            width: 40%;
+            height: 44px;
+            line-height: 44px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 20px;
+            background-color: #d7ebe7;
+            cursor: pointer;
+            margin: 20px auto;
+            .addstaffimg {
+                width: 20px;
+                height: 20px;
+                transform: rotate(45deg);
+            }
+        }
+        .addstaffbox:hover {
+            background-color: #0c860c;
+            color: #fff;
+        }
+        .returnlastpage {
+            width: 75px;
+            height: 45px;
+            line-height: 45px;
+            padding-top: 18px;
+            display: flex;
+            justify-content: space-between;
+            margin-left: 20px;
+            cursor: pointer;
+        }
+        .returnlastpage img {
+            width: 30px;
+            height: 25px;
+        }
+    }
+    
+    .aa {
+        transition: all 1s;
+    }
+    
+    .go {
+        transform: rotate(90deg);
+        transition: all 1s;
+    }
+</style>
+<style lang="scss">
+    .el-checkbox__input.is-disabled.is-checked .el-checkbox__inner {
+        background-color: #d7ebd7;
+        border-color: #d7ebd7;
+        width: 16px;
+        height: 16px;
+    }
+    
+    .el-checkbox__input.is-disabled+span.el-checkbox__label {
+        color: #606266;
+        cursor: not-allowed;
+    }
+    
+    .el-checkbox__input.is-disabled.is-checked .el-checkbox__inner::after {
+        border-color: #fff;
+    }
+    
+    .el-checkbox__input.is-checked+.el-checkbox__label {
+        color: black;
+    }
+    
+    .el-checkbox__input.is-checked .el-checkbox__inner,
+    .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+        background-color: #d7ebd7;
+        border-color: #d7ebd7;
+        width: 16px;
+        height: 16px;
+    }
+    
+    .el-checkbox__inner:hover {
+        border-color: #0c850c;
+    }
+    
+    #enterprise {
+        .el-checkbox__label {
+            font-size: 18px !important;
+            line-height: 40px;
+        }
+        .el-radio__input.is-checked+.el-radio__label {
+            color: #0c850c;
+        }
+        .el-radio__input.is-checked .el-radio__inner {
+            border-color: #0c850c;
+            background: #0c850c;
+        }
+        .el-radio__inner:hover {
+            border-color: #0c850c;
+        }
+        .deptboby table>tr>td {
+            background-color: #f3fbf9;
+            padding: 10px;
+            border-bottom: 1px solid #d7ebe7;
+            width: 25%;
+            margin: 20px auto;
+        }
+        .adddeptmessagebox .el-form-item__label {
+            font-size: 20px;
+        }
+        .addstaffmessagebox .el-form-item__label {
+            font-size: 18px;
+        }
+    }
+</style>
