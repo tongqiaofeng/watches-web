@@ -50,6 +50,14 @@
           </el-form>
         </div>
         <div>
+          <div class="top-form" style="width: 210px;">
+            <span class="top-span">是否直接出库：</span>
+            <el-switch
+              v-model="watchflag"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+            ></el-switch>
+          </div>
           <div class="top-form">
             <span class="top-span">是否全款：</span>
             <el-switch
@@ -331,6 +339,7 @@ export default {
       sellPayTime1: new Date(), // 第一次付款（定金）时间
       sellPayMoney2: "", // 第二次付款（尾款）（sellPayFull为1时，该内容不传）
       sellPayTime2: new Date(), // 第二次付款（尾款）时间（sellPayFull为1时，该内容不传）
+      watchflag:false,
       sellNote: "", // 备注
       paramsSave: {},
       sellStockOutToken: "", // 出库验证码(该值用于生成出库二维码)
@@ -570,6 +579,7 @@ export default {
           sellPayMoney2: this.sellPayMoney2,
           sellPayTime2: this.shellDate(this.sellPayTime2),
           sellNote: this.sellNote,
+          flag:this.watchflag==false?0:1,
         };
         return 1;
       }
@@ -585,6 +595,7 @@ export default {
           sellPayMoney1: this.sellPayMoney1,
           sellPayTime1: this.shellDate(this.sellPayTime1),
           sellNote: this.sellNote,
+          flag:this.watchflag==false?0:1,
         };
         if (this.sellPayMoney1 !== "") {
           if (this.sellPayMoney1 == this.sellMoney) {

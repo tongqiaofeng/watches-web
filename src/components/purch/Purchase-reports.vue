@@ -470,9 +470,9 @@ export default {
       this.getMyDateTime();
     },
     getMyDateTime() {
-      (this.mytime1 = this.mytime[0]),
-        (this.mytime2 = this.mytime[1]),
-        console.log(this.mytime);
+      this.mytime1 = this.mytime[0];
+      this.mytime2 = this.mytime[1];
+      console.log(this.mytime);
       this.imgurl = [];
       this.hintMsg = "数据加载中...";
       this.$axios

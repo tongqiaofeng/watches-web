@@ -41,20 +41,68 @@
               title="手表信息"
               :visible.sync="dialogFormVisible"
               center
+              @close="closeDialog"
               :close-on-press-escape="false"
               :close-on-click-modal="false"
               style="padding: 20px 30px;"
             >
               <el-form label-width="100px">
-                <el-form-item label="手表型号:" required>
-                  <el-autocomplete
-                    v-model="model"
-                    placeholder="请输入手表品牌、型号或昵称简称"
-                    :fetch-suggestions="fetchSuggestions"
-                    :trigger-on-focus="false"
-                    @select="handleModel"
-                  ></el-autocomplete>
-                </el-form-item>
+                <div class="watchseachbox">
+                  <el-form-item label="手表品牌:" style="margin-top:20px">
+                    <el-autocomplete
+                      class="inline-input input-style"
+                      v-model="watchBrand"
+                      :fetch-suggestions="handleBrandcallback"
+                      placeholder="请输入手表品牌（默认全部）"
+                      @select="handleSelectbrand"
+                    ></el-autocomplete>
+                    <!-- <el-select v-model="watchBrand">
+                    <el-option v-for="(item, index) in watchBrandList"
+                               :key="item.name"
+                               :label="item.name"
+                               :value="item.name">
+                    </el-option>
+                  </el-select> -->
+                  </el-form-item>
+                  <el-form-item label="手表型号:" required>
+                    <el-input
+                      v-model="model"
+                      style="width:70%"
+                      placeholder="请输入手表型号"
+                      :trigger-on-focus="false"
+                    >
+                    </el-input>
+                    <el-button
+                      style="border: 1px solid #DCDFE6;cursor: pointer;padding: 10px 18px;border-radius: 6px;margin-left:10px;background-color: white;width: 98px;font-size: 14px;"
+                      @click="fetchSuggestions"
+                      >搜索手表
+                    </el-button>
+                  </el-form-item>
+                </div>
+                <el-table
+                  :data="models"
+                  v-if="models.length > 0"
+                  style="width: 100%;margin:auto;margin-bottom: 22px;"
+                  highlight-current-row
+                  height="30vh"
+                  border
+                  @current-change="handleModel"
+                  ref="multipleTable"
+                >
+                  <el-table-column prop="brand" label="品牌"> </el-table-column>
+                  <el-table-column prop="model" label="型号"> </el-table-column>
+                  <el-table-column prop="pics" label="图片">
+                    <template slot-scope="scope">
+                      <div style="height:140px">
+                        <img
+                          :src="img + '/img/watch/' + scope.row.pics"
+                          alt=""
+                          style=" width: 100%; height: 100%; object-fit: contain;"
+                        />
+                      </div>
+                    </template>
+                  </el-table-column>
+                </el-table>
                 <el-form-item label="采购价格:" required>
                   <el-input
                     placeholder="请输入采购价格"
@@ -113,7 +161,7 @@
                 </el-form-item>
               </el-form>
               <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
+                <el-button @click="dialogfalse">取 消</el-button>
 
                 <el-button type="primary" @click="messageSure" v-preventClick
                   >保 存</el-button
@@ -190,20 +238,66 @@
                     title="手表信息"
                     :visible.sync="dialogUpdateWatchVisible"
                     center
+                    @close="closeDialog"
                     :close-on-press-escape="false"
                     :close-on-click-modal="false"
                   >
                     <el-form label-width="120px">
-                      <el-form-item label="手表型号:" required>
-                        <el-autocomplete
-                          v-model="model"
-                          placeholder="请输入手表品牌、型号或昵称简称"
-                          :fetch-suggestions="fetchSuggestions"
-                          :trigger-on-focus="false"
-                          @select="handleModel"
+                      <div class="watchseachbox">
+                        <el-form-item label="手表品牌:" style="margin-top:20px">
+                          <el-autocomplete
+                            class="inline-input input-style"
+                            v-model="watchBrand"
+                            :fetch-suggestions="handleBrandcallback"
+                            placeholder="请输入手表品牌（默认全部）"
+                            @select="handleSelectbrand"
+                          ></el-autocomplete>
+                        </el-form-item>
+                        <el-form-item
+                          label="手表型号:"
+                          style="margin-top:-2px"
+                          required
                         >
-                        </el-autocomplete>
-                      </el-form-item>
+                          <el-input
+                            v-model="model"
+                            style="width:70%"
+                            placeholder="请输入手表型号"
+                            :trigger-on-focus="false"
+                          >
+                          </el-input>
+                          <el-button
+                            style="width: 98px;font-size: 14px;width: 98px;font-size: 14px;border: 1px solid #DCDFE6;cursor: pointer;padding: 10px 18px;border-radius: 6px;margin-left:10px; background-color: white;width: 98px;font-size: 14px;"
+                            @click="fetchSuggestions"
+                            >搜索手表
+                          </el-button>
+                        </el-form-item>
+                      </div>
+                      <el-table
+                        :data="models"
+                        v-if="models.length > 0"
+                        style="width: 100%;margin:auto;margin-bottom: 22px;"
+                        highlight-current-row
+                        height="30vh"
+                        border
+                        @current-change="handleModel"
+                        ref="multipleTable"
+                      >
+                        <el-table-column prop="brand" label="品牌">
+                        </el-table-column>
+                        <el-table-column prop="model" label="型号">
+                        </el-table-column>
+                        <el-table-column prop="pics" label="图片">
+                          <template slot-scope="scope">
+                            <div style="height:140px">
+                              <img
+                                :src="img + '/img/watch/' + scope.row.pics"
+                                alt=""
+                                style=" width: 100%; height: 100%; object-fit: contain;"
+                              />
+                            </div>
+                          </template>
+                        </el-table-column>
+                      </el-table>
                       <el-form-item label="采购价格:" required>
                         <el-input
                           placeholder="请输入采购价格"
@@ -358,6 +452,8 @@ export default {
       buyWatchSn: "", //机芯号
       buyWatchCard: new Date(), //采购保卡日期
       buyWatchParts: "", //采购配件
+      watchBrandList: [{ name: "全部", series: "" }],
+      watchBrand: "",
       accessory: [],
       accessories: [
         "保卡",
@@ -399,8 +495,41 @@ export default {
     this.store = this.purchasePro.name;
     this.country = this.purchasePro.country;
     this.buyStoreId = this.purchasePro.id;
+    this.handleBrand();
   },
   methods: {
+    handleSelectbrand(item) {
+      this.handleSelect = item.value;
+    },
+    // 获取所有品牌
+    handleBrand() {
+      this.$axios
+        .post(this.$store.state.baseUrl + "/DataWatchBrandList")
+        .then((res) => {
+          console.log("品牌列表");
+          console.log(res);
+          this.watchBrandList = this.watchBrandList.concat(res.data);
+        });
+    },
+    handleBrandcallback(queryString, cb) {
+      let restaurants = this.watchBrandList;
+      for (let items of restaurants) {
+        items.value = items.name;
+      }
+      console.log(queryString);
+      let results = queryString
+        ? restaurants.filter(this.createFilter(queryString))
+        : restaurants;
+      cb(results);
+    },
+    createFilter(queryString) {
+      return (restaurant) => {
+        return (
+          restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
+          0
+        );
+      };
+    },
     goback(val) {
       this.purchaseSelect.nums = val;
       // this.reload();
@@ -493,36 +622,46 @@ export default {
       this.buyWatchBand = "";
       this.buyWatchBrand = "";
       this.buyWatchModel = "";
+      this.watchBrand = "";
     },
     // 手表型号
-    fetchSuggestions(queryString, callback) {
+    fetchSuggestions() {
+      this.models = [];
       this.$axios
         .post(this.$store.state.baseUrl + "/WatchSearch", {
-          keyword: this.model,
+          brand: this.watchBrand == "全部" ? "" : this.watchBrand,
+          model: this.model,
         })
         .then((res) => {
           console.log(res);
           for (let item of res.data) {
-            item.value = item.brand + "-" + item.model;
+            item.pics = item.pics.split("|")[0];
             item.id = item.id;
             item.brand = item.brand;
             item.model = item.model;
-            item.pics = item.pics;
+            this.models.push(item);
           }
-          this.models = res.data;
-          callback(this.models);
+          if (this.models.length <= 0) {
+            this.$message.warning({
+              message: "暂无数据，请检查查询条件是否错误",
+              showClose: true,
+            });
+          }
+          console.log(this.models);
         });
     },
     handleModel(item) {
       this.buyWatchId = item.id;
       this.myBrand = item.brand;
       this.myModel = item.model;
+      this.model = item.model;
       console.log(item);
       if (item.pics !== null) {
         this.imgSels = item.pics.split("|")[0];
       } else {
         this.imgSels = [];
       }
+      this.models = [];
     },
     // 采购价格
     watchprice() {
@@ -572,6 +711,11 @@ export default {
         return 2;
       }
     },
+    dialogfalse() {
+      (this.dialogFormVisible = false),
+        // this.watchBrand='全部',
+        (this.models = []);
+    },
     // 确认保存手表信息
     messageSure() {
       if (this.verify() == 2) {
@@ -620,21 +764,32 @@ export default {
         this.buyWatchBand = "";
         this.buyWatchBrand = "";
         this.buyWatchModel = "";
+        // this.watchBrand='全部'
         console.log(this.pics);
       }
+    },
+    closeDialog() {
+      this.models = [];
+      // this.watchBrand='全部'
     },
     // 修改手表信息
     updateWatch(item, index) {
       console.log(item);
       console.log(index);
       this.updateIndex = index;
+      this.buyWatchId = item.buyWatchId;
       this.dialogUpdateWatchVisible = true;
-      this.model = item.buyWatchBrand + "-" + item.buyWatchModel;
+      this.model = item.buyWatchModel;
       this.buyWatchPrice = item.buyWatchPrice;
       this.buyWatchSn = item.buyWatchSn;
       this.buyWatchCard = item.buyWatchCard;
       this.accessory = item.buyWatchParts.split("|");
       this.buyWatchBand = item.buyWatchBand;
+      (this.myBrand = item.buyWatchBrand),
+        (this.myModel = item.buyWatchModel),
+        (this.watchBrand = item.buyWatchBrand),
+        (this.imgSels = item.buyPics);
+      console.log(this.buyWatchBand);
     },
     // 确认修改
     messageSureUpdate() {

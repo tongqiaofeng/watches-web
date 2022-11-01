@@ -507,6 +507,7 @@
                       <el-input
                         type="textarea"
                         v-model="des"
+                        :rows="5"
                         class="input-style"
                       ></el-input>
                     </el-form-item>
@@ -759,6 +760,7 @@
                       <el-input
                         v-model="movementDes"
                         type="textarea"
+                        :rows="4"
                         class="input-style"
                       ></el-input>
                     </el-form-item>
@@ -838,584 +840,6 @@
                       @click="watchUpdate(item)"
                     />
                   </el-tooltip>
-
-                  <el-dialog
-                    class="watch-chose"
-                    title="修改手表信息"
-                    :visible.sync="dialogUpdateWatchVisible"
-                    center
-                    :close-on-press-escape="false"
-                    :close-on-click-modal="false"
-                    :lock-scroll="false"
-                    :append-to-body="true"
-                  >
-                    <div>
-                      <div>
-                        <el-form label-width="150px">
-                          <el-form-item label="手表图片：" required>
-                            <div style="display:flex;">
-                              <div class="upload-imgs">
-                                <div class="add">
-                                  <form
-                                    enctype="multipart/form-data"
-                                    style="width: 100px;"
-                                  >
-                                    <input
-                                      @change="inputChange($event)"
-                                      type="file"
-                                      name="img"
-                                      accept="image/*"
-                                      class="inputUpload"
-                                      multiple
-                                    />
-                                    <i class="el-icon-plus addIcon"></i>
-                                  </form>
-                                </div>
-                                <div
-                                  style="display:flex;position:relative;flex-wrap: wrap;"
-                                  id="delImg"
-                                  class="delImg"
-                                >
-                                  <div
-                                    v-for="(imgurl, index) of imgurls"
-                                    :key="index"
-                                    style="margin-left:10px;position:relative;"
-                                    v-dragging="{
-                                      item: imgurl,
-                                      list: imgurls,
-                                      group: 'imgurls',
-                                    }"
-                                  >
-                                    <span
-                                      v-if="imgurl !== '' && imgurl !== null"
-                                      class="spanStyle"
-                                      @click="delImage(index)"
-                                      >x</span
-                                    >
-                                    <img
-                                      v-if="imgurl !== '' && imgurl !== null"
-                                      :src="img + '/img/watch/' + imgurl"
-                                      width="100px"
-                                      height="100px"
-                                      style="border-radius:5px;object-fit:cover;"
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </el-form-item>
-                          <el-form-item label="品牌名称：" required>
-                            <el-autocomplete
-                              class="inline-input input-style"
-                              v-model="addBrand"
-                              :fetch-suggestions="querySearch"
-                              placeholder="请输入内容"
-                              @select="handleSelect"
-                            >
-                            </el-autocomplete>
-                          </el-form-item>
-                          <el-form-item label="系列名称：">
-                            <el-autocomplete
-                              class="inline-input input-style"
-                              v-model="addSeries"
-                              :fetch-suggestions="querySearch2"
-                              placeholder="请输入内容"
-                              @select="handleSelect2"
-                            >
-                            </el-autocomplete>
-                          </el-form-item>
-                          <el-form-item label="手表型号：" required>
-                            <el-input
-                              v-model="addModel"
-                              class="input-style"
-                              placeholder="请输入手表型号"
-                            ></el-input>
-                          </el-form-item>
-                          <el-form-item label="公价：">
-                            <div style="width: 100%;">
-                              <el-select
-                                v-model="publicPriceArea"
-                                placeholder="请选择"
-                                style="width: 30%;"
-                                @change="priceChange"
-                              >
-                                <el-option
-                                  v-for="(item, index) in countryList"
-                                  :key="index"
-                                  :label="item.cnName"
-                                  :value="item.cnName"
-                                >
-                                </el-option>
-                              </el-select>
-                              <el-input
-                                v-model="publicPrice"
-                                placeholder="请输入"
-                                style="width: 30%;"
-                              >
-                                <i
-                                  slot="suffix"
-                                  style="color: #000;margin-right:5%;font-style:normal;"
-                                  >{{ publicPriceCurrency }}</i
-                                >
-                              </el-input>
-                              <el-button
-                                style="width: 100px;height: 40px;margin-left: 10px;font-size: 14px;"
-                                type="primary"
-                                @click="addPrice"
-                                v-preventClick
-                                >增加</el-button
-                              >
-                            </div>
-                          </el-form-item>
-                          <el-form-item
-                            label=""
-                            style="width: 100%;"
-                            v-for="(price, index) in publicPriceList"
-                            :key="index"
-                          >
-                            <div style="width: 100%;">
-                              <el-select
-                                style="width: 30%;"
-                                @change="priceChange2(index)"
-                                v-model="price.country"
-                              >
-                                <el-option
-                                  v-for="(item, index) in countryList"
-                                  :key="index"
-                                  :label="item.cnName"
-                                  :value="item.cnName"
-                                >
-                                </el-option>
-                              </el-select>
-                              <el-input
-                                v-model="price.price"
-                                style="width: 30%;"
-                              >
-                                <i
-                                  slot="suffix"
-                                  style="color: #000;margin-right:5%;font-style:normal;"
-                                  >{{ price.currency }}</i
-                                >
-                              </el-input>
-                              <el-button
-                                type="primary"
-                                style="width: 100px;height: 40px;margin-left: 10px;font-size: 14px;"
-                                @click="updatePrice(index)"
-                                v-preventClick
-                                >修改</el-button
-                              >
-                              <el-button
-                                type="primary"
-                                style="width: 100px;height: 40px;margin-left: 10px;font-size: 14px;"
-                                @click="deletePrice(index)"
-                                v-preventClick
-                                >删除</el-button
-                              >
-                            </div>
-                          </el-form-item>
-                        </el-form>
-                      </div>
-                      <div>
-                        <h3>基本信息：</h3>
-                        <el-form label-width="150px">
-                          <el-form-item label="适用人群：">
-                            <el-select
-                              v-model="crowd"
-                              placeholder="请选择"
-                              class="input-style"
-                            >
-                              <el-option label="男士" value="男士"></el-option>
-                              <el-option label="女士" value="女士"></el-option>
-                              <el-option label="中性" value="中性"></el-option>
-                              <el-option label="情侣" value="情侣"></el-option>
-                            </el-select>
-                          </el-form-item>
-                          <el-form-item label="风格：">
-                            <el-select
-                              v-model="style"
-                              placeholder="请选择"
-                              class="input-style"
-                            >
-                              <el-option value="运动"></el-option>
-                              <el-option value="商务"></el-option>
-                              <el-option value="时尚"></el-option>
-                              <el-option value="休闲"></el-option>
-                              <el-option value="正装"></el-option>
-                              <el-option value="珠宝"></el-option>
-                              <el-option value="简约"></el-option>
-                              <el-option value="古典"></el-option>
-                            </el-select>
-                          </el-form-item>
-                          <el-form-item label="是否背透：">
-                            <el-radio-group v-model="transparent">
-                              <el-radio label="是"></el-radio>
-                              <el-radio label="否"></el-radio>
-                            </el-radio-group>
-                          </el-form-item>
-                          <el-form-item label="是否限量：">
-                            <el-radio-group v-model="limited">
-                              <el-radio label="是"></el-radio>
-                              <el-radio label="否"></el-radio>
-                            </el-radio-group>
-                          </el-form-item>
-                          <el-form-item label="限量版个数：">
-                            <el-input
-                              v-model="limitedNum"
-                              class="input-style"
-                              placeholder="请输入"
-                            ></el-input>
-                          </el-form-item>
-                          <el-form-item label="特别版：">
-                            <el-input
-                              v-model="special"
-                              class="input-style"
-                              placeholder="请输入"
-                            ></el-input>
-                          </el-form-item>
-                          <el-form-item label="是否防水：">
-                            <el-radio-group v-model="waterproofEn">
-                              <el-radio label="是"></el-radio>
-                              <el-radio label="否"></el-radio>
-                            </el-radio-group>
-                          </el-form-item>
-                          <el-form-item label="防水深度：">
-                            <el-input v-model="waterproof" class="input-style">
-                              <i
-                                slot="suffix"
-                                style="color: #000;margin-right:5%;font-style:normal;"
-                                >米</i
-                              >
-                            </el-input>
-                          </el-form-item>
-                          <el-form-item label="昵称简称：">
-                            <el-input
-                              v-model="watchNick"
-                              class="input-style"
-                            ></el-input>
-                          </el-form-item>
-                          <el-form-item label="上市年份：">
-                            <el-input
-                              v-model="startYear"
-                              class="input-style"
-                            ></el-input>
-                          </el-form-item>
-                          <el-form-item label="停产年份：">
-                            <el-input
-                              v-model="endYear"
-                              class="input-style"
-                            ></el-input>
-                          </el-form-item>
-                          <el-form-item label="名人同款：">
-                            <el-input
-                              v-model="famous"
-                              class="input-style"
-                            ></el-input>
-                          </el-form-item>
-                          <el-form-item label="功能：">
-                            <el-checkbox-group v-model="funcList">
-                              <el-checkbox
-                                v-for="(funcName, index) in funcLi"
-                                :key="index"
-                                :label="funcName"
-                              >
-                              </el-checkbox>
-                            </el-checkbox-group>
-                          </el-form-item>
-                          <el-form-item label="手表描述：">
-                            <el-input
-                              type="textarea"
-                              v-model="des"
-                              class="input-style"
-                            ></el-input>
-                          </el-form-item>
-                        </el-form>
-                      </div>
-                      <div>
-                        <h3>表壳：</h3>
-                        <el-form label-width="150px">
-                          <el-form-item label="表壳直径：">
-                            <el-input
-                              v-model="watchShellSize"
-                              class="input-style"
-                            >
-                              <i
-                                slot="suffix"
-                                style="color: #000;margin-right:5%;font-style:normal;"
-                                >mm</i
-                              >
-                            </el-input>
-                          </el-form-item>
-                          <el-form-item label="表壳宽度：">
-                            <el-input
-                              v-model="watchShellWidth"
-                              class="input-style"
-                            >
-                              <i
-                                slot="suffix"
-                                style="color: #000;margin-right:5%;font-style:normal;"
-                                >mm</i
-                              >
-                            </el-input>
-                          </el-form-item>
-                          <el-form-item label="表壳高度：">
-                            <el-input
-                              v-model="watchShellHeight"
-                              class="input-style"
-                            >
-                              <i
-                                slot="suffix"
-                                style="color: #000;margin-right:5%;font-style:normal;"
-                                >mm</i
-                              >
-                            </el-input>
-                          </el-form-item>
-                          <el-form-item label="表壳厚度：">
-                            <el-input
-                              v-model="watchThickness"
-                              class="input-style"
-                            >
-                              <i
-                                slot="suffix"
-                                style="color: #000;margin-right:5%;font-style:normal;"
-                                >mm</i
-                              >
-                            </el-input>
-                          </el-form-item>
-                          <el-form-item label="表镜材质：">
-                            <el-select
-                              v-model="glassMaterial"
-                              placeholder="请选择"
-                              class="input-style"
-                            >
-                              <el-option value="蓝宝石水晶"></el-option>
-                              <el-option value="矿物玻璃"></el-option>
-                              <el-option value="玻璃"></el-option>
-                            </el-select>
-                          </el-form-item>
-                          <el-form-item label="表壳材质：">
-                            <el-checkbox-group v-model="shellMaterialList">
-                              <el-checkbox
-                                v-for="(shell, index) in shellList"
-                                :key="index"
-                                :label="shell"
-                              >
-                              </el-checkbox>
-                            </el-checkbox-group>
-                          </el-form-item>
-                          <el-form-item label="表圈材质：">
-                            <el-checkbox-group v-model="bezelMaterialList">
-                              <el-checkbox
-                                v-for="(baze, index) in bazeList"
-                                :key="index"
-                                :label="baze"
-                              ></el-checkbox>
-                            </el-checkbox-group>
-                          </el-form-item>
-                          <el-form-item label="表冠材质：">
-                            <el-checkbox-group v-model="crownMaterialList">
-                              <el-checkbox
-                                v-for="(crown, index) in bazeList"
-                                :key="index"
-                                :label="crown"
-                              ></el-checkbox>
-                            </el-checkbox-group>
-                          </el-form-item>
-                        </el-form>
-                      </div>
-                      <div>
-                        <h3>表盘：</h3>
-                        <el-form label-width="150px">
-                          <el-form-item label="表盘形状：">
-                            <el-select
-                              v-model="dialShape"
-                              placeholder="请选择"
-                              class="input-style"
-                            >
-                              <el-option value="圆形"></el-option>
-                              <el-option value="方形"></el-option>
-                              <el-option value="椭圆形"></el-option>
-                              <el-option value="酒桶形"></el-option>
-                            </el-select>
-                          </el-form-item>
-                          <el-form-item label="表盘刻度：">
-                            <el-select
-                              v-model="dialMark"
-                              placeholder="请选择"
-                              class="input-style"
-                            >
-                              <el-option value="阿拉伯文"></el-option>
-                              <el-option value="罗马文"></el-option>
-                              <el-option value="条形"></el-option>
-                              <el-option value="钻石"></el-option>
-                              <el-option value="无刻度"></el-option>
-                              <el-option value="其它"></el-option>
-                            </el-select>
-                          </el-form-item>
-                          <el-form-item label="表盘直径：">
-                            <el-input v-model="dialSize" class="input-style">
-                              <i
-                                slot="suffix"
-                                style="color: #000;margin-right:5%;font-style:normal;"
-                                >mm</i
-                              >
-                            </el-input>
-                          </el-form-item>
-                          <el-form-item label="表盘昵称：">
-                            <el-input
-                              v-model="dialNick"
-                              class="input-style"
-                            ></el-input>
-                          </el-form-item>
-                          <el-form-item label="表盘工艺：">
-                            <el-input
-                              v-model="dialCraft"
-                              class="input-style"
-                            ></el-input>
-                          </el-form-item>
-                          <el-form-item label="表盘颜色：">
-                            <el-checkbox-group v-model="dialClrList">
-                              <el-checkbox
-                                v-for="(dial, index) in dialList"
-                                :key="index"
-                                :label="dial"
-                              ></el-checkbox>
-                            </el-checkbox-group>
-                          </el-form-item>
-                          <el-form-item label="表盘材质：">
-                            <el-checkbox-group v-model="dialMaterialList">
-                              <el-checkbox
-                                v-for="(mater, index) in dialMateList"
-                                :key="index"
-                                :label="mater"
-                              >
-                              </el-checkbox>
-                            </el-checkbox-group>
-                          </el-form-item>
-                        </el-form>
-                      </div>
-                      <div>
-                        <h3>表带表扣：</h3>
-                        <el-form label-width="150px">
-                          <el-form-item label="表扣类型：">
-                            <el-select
-                              v-model="claspType"
-                              placeholder="请选择"
-                              class="input-style"
-                            >
-                              <el-option value="针扣"></el-option>
-                              <el-option value="折叠扣"></el-option>
-                              <el-option value="蝴蝶扣"></el-option>
-                              <el-option value="暗扣"></el-option>
-                              <el-option value="其它"></el-option>
-                            </el-select>
-                          </el-form-item>
-                          <el-form-item label="表带材质：">
-                            <el-select
-                              v-model="bandMaterial"
-                              placeholder="请选择"
-                              class="input-style"
-                            >
-                              <el-option value="真皮"></el-option>
-                              <el-option value="牛皮"></el-option>
-                              <el-option value="鳄鱼皮"></el-option>
-                              <el-option value="精钢"></el-option>
-                              <el-option value="橡胶"></el-option>
-                              <el-option value="白金"></el-option>
-                              <el-option value="不锈钢"></el-option>
-                              <el-option value="黄金"></el-option>
-                              <el-option value="钛合金"></el-option>
-                              <el-option value="玫瑰金"></el-option>
-                            </el-select>
-                          </el-form-item>
-                          <el-form-item label="表带颜色：">
-                            <el-checkbox-group v-model="bandClrList">
-                              <el-checkbox
-                                v-for="(color, index) in dialList"
-                                :key="index"
-                                :label="color"
-                              ></el-checkbox>
-                            </el-checkbox-group>
-                          </el-form-item>
-                        </el-form>
-                      </div>
-                      <div>
-                        <h3>机芯：</h3>
-                        <el-form label-width="150px">
-                          <el-form-item label="机芯类型：">
-                            <el-select
-                              v-model="movementType"
-                              placeholder="请选择"
-                              class="input-style"
-                            >
-                              <el-option value="自动机械"></el-option>
-                              <el-option value="手动机械"></el-option>
-                              <el-option value="石英"></el-option>
-                              <el-option value="光能"></el-option>
-                              <el-option value="智能"></el-option>
-                              <el-option value="电子"></el-option>
-                            </el-select>
-                          </el-form-item>
-                          <el-form-item label="机芯型号：">
-                            <el-input
-                              v-model="movementModel"
-                              class="input-style"
-                            ></el-input>
-                          </el-form-item>
-                          <el-form-item label="机芯直径：">
-                            <el-input
-                              v-model="movementSize"
-                              class="input-style"
-                            >
-                              <i
-                                slot="suffix"
-                                style="color: #000;margin-right:5%;font-style:normal;"
-                                >mm</i
-                              >
-                            </el-input>
-                          </el-form-item>
-                          <el-form-item label="机芯宝石数：">
-                            <el-input
-                              v-model="jewelNum"
-                              class="input-style"
-                            ></el-input>
-                          </el-form-item>
-                          <el-form-item label="动力存储：">
-                            <el-input v-model="powerTime" class="input-style">
-                              <i
-                                slot="suffix"
-                                style="color: #000;margin-right:5%;font-style:normal;"
-                                >小时</i
-                              >
-                            </el-input>
-                          </el-form-item>
-                          <el-form-item label="机芯振频：">
-                            <el-input
-                              v-model="frequency"
-                              class="input-style"
-                            ></el-input>
-                          </el-form-item>
-                          <el-form-item label="机芯描述：">
-                            <el-input
-                              v-model="movementDes"
-                              type="textarea"
-                              class="input-style"
-                            ></el-input>
-                          </el-form-item>
-                        </el-form>
-                      </div>
-                    </div>
-                    <div slot="footer">
-                      <el-button @click="dialogUpdateWatchVisible = false"
-                        >取 消</el-button
-                      >
-                      <el-button
-                        type="primary"
-                        @click="UpdateWatchSure"
-                        v-preventClick
-                        >确 定</el-button
-                      >
-                    </div>
-                  </el-dialog>
                 </td>
               </tr>
             </table>
@@ -1732,6 +1156,529 @@
       >
       </Sell-prices-details>
     </div>
+    <div v-if="watchQuerySel.select == 5" class="update-watch-detail">
+      <div class="back-img" @click="gobackWatchList">
+        <div>
+          <img src="../../assets/imgs/goback.png" />
+        </div>
+        <span class="font">返回</span>
+      </div>
+      <div>
+        <div>
+          <el-form label-width="150px">
+            <el-form-item label="手表图片：" required>
+              <div style="display:flex;">
+                <div class="upload-imgs">
+                  <div class="add">
+                    <form enctype="multipart/form-data" style="width: 100px;">
+                      <input
+                        @change="inputChange($event)"
+                        type="file"
+                        name="img"
+                        accept="image/*"
+                        class="inputUpload"
+                        multiple
+                      />
+                      <i class="el-icon-plus addIcon"></i>
+                    </form>
+                  </div>
+                  <div
+                    style="display:flex;position:relative;flex-wrap: wrap;"
+                    id="delImg"
+                    class="delImg"
+                  >
+                    <div
+                      v-for="(imgurl, index) of imgurls"
+                      :key="index"
+                      style="margin-left:10px;position:relative;"
+                      v-dragging="{
+                        item: imgurl,
+                        list: imgurls,
+                        group: 'imgurls',
+                      }"
+                    >
+                      <span
+                        v-if="imgurl !== '' && imgurl !== null"
+                        class="spanStyle"
+                        @click="delImage(index)"
+                        >x</span
+                      >
+                      <img
+                        v-if="imgurl !== '' && imgurl !== null"
+                        :src="img + '/img/watch/' + imgurl"
+                        width="100px"
+                        height="100px"
+                        style="border-radius:5px;object-fit:cover;"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </el-form-item>
+            <el-form-item label="品牌名称：" required>
+              <el-autocomplete
+                class="inline-input input-style"
+                v-model="addBrand"
+                :fetch-suggestions="querySearch"
+                placeholder="请输入内容"
+                @select="handleSelect"
+              >
+              </el-autocomplete>
+            </el-form-item>
+            <el-form-item label="系列名称：">
+              <el-autocomplete
+                class="inline-input input-style"
+                v-model="addSeries"
+                :fetch-suggestions="querySearch2"
+                placeholder="请输入内容"
+                @select="handleSelect2"
+              >
+              </el-autocomplete>
+            </el-form-item>
+            <el-form-item label="手表型号：" required>
+              <el-input
+                v-model="addModel"
+                class="input-style"
+                placeholder="请输入手表型号"
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="公价：">
+              <div style="width: 100%;">
+                <el-select
+                  v-model="publicPriceArea"
+                  placeholder="请选择"
+                  style="width: 30%;"
+                  @change="priceChange"
+                >
+                  <el-option
+                    v-for="(item, index) in countryList"
+                    :key="index"
+                    :label="item.cnName"
+                    :value="item.cnName"
+                  >
+                  </el-option>
+                </el-select>
+                <el-input
+                  v-model="publicPrice"
+                  placeholder="请输入"
+                  style="width: 30%;"
+                >
+                  <i
+                    slot="suffix"
+                    style="color: #000;margin-right:5%;font-style:normal;"
+                    >{{ publicPriceCurrency }}</i
+                  >
+                </el-input>
+                <el-button
+                  style="width: 100px;height: 40px;margin-left: 10px;font-size: 14px;"
+                  type="primary"
+                  @click="addPrice"
+                  v-preventClick
+                  >增加</el-button
+                >
+              </div>
+            </el-form-item>
+            <el-form-item
+              label=""
+              style="width: 100%;"
+              v-for="(price, index) in publicPriceList"
+              :key="index"
+            >
+              <div style="width: 100%;">
+                <el-select
+                  style="width: 30%;"
+                  @change="priceChange2(index)"
+                  v-model="price.country"
+                >
+                  <el-option
+                    v-for="(item, index) in countryList"
+                    :key="index"
+                    :label="item.cnName"
+                    :value="item.cnName"
+                  >
+                  </el-option>
+                </el-select>
+                <el-input v-model="price.price" style="width: 30%;">
+                  <i
+                    slot="suffix"
+                    style="color: #000;margin-right:5%;font-style:normal;"
+                    >{{ price.currency }}</i
+                  >
+                </el-input>
+                <el-button
+                  type="primary"
+                  style="width: 100px;height: 40px;margin-left: 10px;font-size: 14px;"
+                  @click="updatePrice(index)"
+                  v-preventClick
+                  >修改</el-button
+                >
+                <el-button
+                  type="primary"
+                  style="width: 100px;height: 40px;margin-left: 10px;font-size: 14px;"
+                  @click="deletePrice(index)"
+                  v-preventClick
+                  >删除</el-button
+                >
+              </div>
+            </el-form-item>
+          </el-form>
+        </div>
+        <div>
+          <h3>基本信息：</h3>
+          <el-form label-width="150px">
+            <el-form-item label="适用人群：">
+              <el-select
+                v-model="crowd"
+                placeholder="请选择"
+                class="input-style"
+              >
+                <el-option label="男士" value="男士"></el-option>
+                <el-option label="女士" value="女士"></el-option>
+                <el-option label="中性" value="中性"></el-option>
+                <el-option label="情侣" value="情侣"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="风格：">
+              <el-select
+                v-model="style"
+                placeholder="请选择"
+                class="input-style"
+              >
+                <el-option value="运动"></el-option>
+                <el-option value="商务"></el-option>
+                <el-option value="时尚"></el-option>
+                <el-option value="休闲"></el-option>
+                <el-option value="正装"></el-option>
+                <el-option value="珠宝"></el-option>
+                <el-option value="简约"></el-option>
+                <el-option value="古典"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="是否背透：">
+              <el-radio-group v-model="transparent">
+                <el-radio label="是"></el-radio>
+                <el-radio label="否"></el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="是否限量：">
+              <el-radio-group v-model="limited">
+                <el-radio label="是"></el-radio>
+                <el-radio label="否"></el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="限量版个数：">
+              <el-input
+                v-model="limitedNum"
+                class="input-style"
+                placeholder="请输入"
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="特别版：">
+              <el-input
+                v-model="special"
+                class="input-style"
+                placeholder="请输入"
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="是否防水：">
+              <el-radio-group v-model="waterproofEn">
+                <el-radio label="是"></el-radio>
+                <el-radio label="否"></el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="防水深度：">
+              <el-input v-model="waterproof" class="input-style">
+                <i
+                  slot="suffix"
+                  style="color: #000;margin-right:5%;font-style:normal;"
+                  >米</i
+                >
+              </el-input>
+            </el-form-item>
+            <el-form-item label="昵称简称：">
+              <el-input v-model="watchNick" class="input-style"></el-input>
+            </el-form-item>
+            <el-form-item label="上市年份：">
+              <el-input v-model="startYear" class="input-style"></el-input>
+            </el-form-item>
+            <el-form-item label="停产年份：">
+              <el-input v-model="endYear" class="input-style"></el-input>
+            </el-form-item>
+            <el-form-item label="名人同款：">
+              <el-input v-model="famous" class="input-style"></el-input>
+            </el-form-item>
+            <el-form-item label="功能：">
+              <el-checkbox-group v-model="funcList">
+                <el-checkbox
+                  v-for="(funcName, index) in funcLi"
+                  :key="index"
+                  :label="funcName"
+                >
+                </el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+            <el-form-item label="手表描述：">
+              <el-input
+                type="textarea"
+                v-model="des"
+                :rows="5"
+                class="input-style"
+              ></el-input>
+            </el-form-item>
+          </el-form>
+        </div>
+        <div>
+          <h3>表壳：</h3>
+          <el-form label-width="150px">
+            <el-form-item label="表壳直径：">
+              <el-input v-model="watchShellSize" class="input-style">
+                <i
+                  slot="suffix"
+                  style="color: #000;margin-right:5%;font-style:normal;"
+                  >mm</i
+                >
+              </el-input>
+            </el-form-item>
+            <el-form-item label="表壳宽度：">
+              <el-input v-model="watchShellWidth" class="input-style">
+                <i
+                  slot="suffix"
+                  style="color: #000;margin-right:5%;font-style:normal;"
+                  >mm</i
+                >
+              </el-input>
+            </el-form-item>
+            <el-form-item label="表壳高度：">
+              <el-input v-model="watchShellHeight" class="input-style">
+                <i
+                  slot="suffix"
+                  style="color: #000;margin-right:5%;font-style:normal;"
+                  >mm</i
+                >
+              </el-input>
+            </el-form-item>
+            <el-form-item label="表壳厚度：">
+              <el-input v-model="watchThickness" class="input-style">
+                <i
+                  slot="suffix"
+                  style="color: #000;margin-right:5%;font-style:normal;"
+                  >mm</i
+                >
+              </el-input>
+            </el-form-item>
+            <el-form-item label="表镜材质：">
+              <el-select
+                v-model="glassMaterial"
+                placeholder="请选择"
+                class="input-style"
+              >
+                <el-option value="蓝宝石水晶"></el-option>
+                <el-option value="矿物玻璃"></el-option>
+                <el-option value="玻璃"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="表壳材质：">
+              <el-checkbox-group v-model="shellMaterialList">
+                <el-checkbox
+                  v-for="(shell, index) in shellList"
+                  :key="index"
+                  :label="shell"
+                >
+                </el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+            <el-form-item label="表圈材质：">
+              <el-checkbox-group v-model="bezelMaterialList">
+                <el-checkbox
+                  v-for="(baze, index) in bazeList"
+                  :key="index"
+                  :label="baze"
+                ></el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+            <el-form-item label="表冠材质：">
+              <el-checkbox-group v-model="crownMaterialList">
+                <el-checkbox
+                  v-for="(crown, index) in bazeList"
+                  :key="index"
+                  :label="crown"
+                ></el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+          </el-form>
+        </div>
+        <div>
+          <h3>表盘：</h3>
+          <el-form label-width="150px">
+            <el-form-item label="表盘形状：">
+              <el-select
+                v-model="dialShape"
+                placeholder="请选择"
+                class="input-style"
+              >
+                <el-option value="圆形"></el-option>
+                <el-option value="方形"></el-option>
+                <el-option value="椭圆形"></el-option>
+                <el-option value="酒桶形"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="表盘刻度：">
+              <el-select
+                v-model="dialMark"
+                placeholder="请选择"
+                class="input-style"
+              >
+                <el-option value="阿拉伯文"></el-option>
+                <el-option value="罗马文"></el-option>
+                <el-option value="条形"></el-option>
+                <el-option value="钻石"></el-option>
+                <el-option value="无刻度"></el-option>
+                <el-option value="其它"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="表盘直径：">
+              <el-input v-model="dialSize" class="input-style">
+                <i
+                  slot="suffix"
+                  style="color: #000;margin-right:5%;font-style:normal;"
+                  >mm</i
+                >
+              </el-input>
+            </el-form-item>
+            <el-form-item label="表盘昵称：">
+              <el-input v-model="dialNick" class="input-style"></el-input>
+            </el-form-item>
+            <el-form-item label="表盘工艺：">
+              <el-input v-model="dialCraft" class="input-style"></el-input>
+            </el-form-item>
+            <el-form-item label="表盘颜色：">
+              <el-checkbox-group v-model="dialClrList">
+                <el-checkbox
+                  v-for="(dial, index) in dialList"
+                  :key="index"
+                  :label="dial"
+                ></el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+            <el-form-item label="表盘材质：">
+              <el-checkbox-group v-model="dialMaterialList">
+                <el-checkbox
+                  v-for="(mater, index) in dialMateList"
+                  :key="index"
+                  :label="mater"
+                >
+                </el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+          </el-form>
+        </div>
+        <div>
+          <h3>表带表扣：</h3>
+          <el-form label-width="150px">
+            <el-form-item label="表扣类型：">
+              <el-select
+                v-model="claspType"
+                placeholder="请选择"
+                class="input-style"
+              >
+                <el-option value="针扣"></el-option>
+                <el-option value="折叠扣"></el-option>
+                <el-option value="蝴蝶扣"></el-option>
+                <el-option value="暗扣"></el-option>
+                <el-option value="其它"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="表带材质：">
+              <el-select
+                v-model="bandMaterial"
+                placeholder="请选择"
+                class="input-style"
+              >
+                <el-option value="真皮"></el-option>
+                <el-option value="牛皮"></el-option>
+                <el-option value="鳄鱼皮"></el-option>
+                <el-option value="精钢"></el-option>
+                <el-option value="橡胶"></el-option>
+                <el-option value="白金"></el-option>
+                <el-option value="不锈钢"></el-option>
+                <el-option value="黄金"></el-option>
+                <el-option value="钛合金"></el-option>
+                <el-option value="玫瑰金"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="表带颜色：">
+              <el-checkbox-group v-model="bandClrList">
+                <el-checkbox
+                  v-for="(color, index) in dialList"
+                  :key="index"
+                  :label="color"
+                ></el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+          </el-form>
+        </div>
+        <div>
+          <h3>机芯：</h3>
+          <el-form label-width="150px">
+            <el-form-item label="机芯类型：">
+              <el-select
+                v-model="movementType"
+                placeholder="请选择"
+                class="input-style"
+              >
+                <el-option value="自动机械"></el-option>
+                <el-option value="手动机械"></el-option>
+                <el-option value="石英"></el-option>
+                <el-option value="光能"></el-option>
+                <el-option value="智能"></el-option>
+                <el-option value="电子"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="机芯型号：">
+              <el-input v-model="movementModel" class="input-style"></el-input>
+            </el-form-item>
+            <el-form-item label="机芯直径：">
+              <el-input v-model="movementSize" class="input-style">
+                <i
+                  slot="suffix"
+                  style="color: #000;margin-right:5%;font-style:normal;"
+                  >mm</i
+                >
+              </el-input>
+            </el-form-item>
+            <el-form-item label="机芯宝石数：">
+              <el-input v-model="jewelNum" class="input-style"></el-input>
+            </el-form-item>
+            <el-form-item label="动力存储：">
+              <el-input v-model="powerTime" class="input-style">
+                <i
+                  slot="suffix"
+                  style="color: #000;margin-right:5%;font-style:normal;"
+                  >小时</i
+                >
+              </el-input>
+            </el-form-item>
+            <el-form-item label="机芯振频：">
+              <el-input v-model="frequency" class="input-style"></el-input>
+            </el-form-item>
+            <el-form-item label="机芯描述：">
+              <el-input
+                v-model="movementDes"
+                type="textarea"
+                :rows="4"
+                class="input-style"
+              ></el-input>
+            </el-form-item>
+          </el-form>
+        </div>
+      </div>
+
+      <div style="margin: 80px 35% 0 0;text-align: right;">
+        <el-button type="primary" @click="UpdateWatchSure" v-preventClick
+          >确 定</el-button
+        >
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -1740,7 +1687,6 @@ export default {
     return {
       hintMsg: "数据加载中...",
       dialogAddWatchVisible: false,
-      dialogUpdateWatchVisible: false,
       isshowcheck: false,
       isshowcheck2: false,
       watchBrandList: [],
@@ -2171,9 +2117,6 @@ export default {
           "branstyle"
         )[0].children[0].children[1].style.color = "#919090";
       }
-      console.log("多选西鄂武");
-      console.log(this.watchBrandListname);
-      console.log(val);
       if (this.watchBrandListname.length == val.length) {
         this.isshowcheck = false;
         document.getElementsByClassName(
@@ -2207,9 +2150,6 @@ export default {
           "branstyle"
         )[0].children[0].children[1].style.color = "#919090";
       }
-      console.log("测试吾问无为谓无无无无无无");
-      console.log(this.seriesList);
-      console.log(val);
       if (this.seriesList.length == val.length) {
         document.getElementsByClassName(
           "all-style2"
@@ -2235,7 +2175,7 @@ export default {
       } else {
         this.downPrice = Number(this.value2[0] + "0000");
       }
-      console.log(
+      /*console.log(
         "品牌:" +
           this.arrbrand +
           "系列:" +
@@ -2257,7 +2197,7 @@ export default {
       );
       console.log(
         "公价价格" + this.publicPrice + "公价地区：" + this.publicPriceArea
-      );
+      );*/
       this.watchList = [];
       this.hintMsg = "数据加载中...";
       this.$axios
@@ -2791,7 +2731,6 @@ export default {
       console.log(item);
       this.updateWatchId = item.id;
       this.funcList = [];
-
       this.shellMaterialList = [];
       this.bezelMaterialList = [];
       this.crownMaterialList = [];
@@ -2802,7 +2741,7 @@ export default {
       this.imgurls = [];
       if (item.pics !== null && item.pics !== "") {
         if (item.pics.indexOf("|") !== -1) {
-          this.imgurls = item.pics.split("|");
+          this.imgurls = item.pics.split("|").filter(Boolean);
         } else {
           this.imgurls.push(item.pics);
         }
@@ -2817,29 +2756,7 @@ export default {
       this.publicPrice = "";
       this.publicPriceCurrency = "";
       console.log(item.publicPriceArea);
-      this.publicPriceList = [];
-      if (item.publicPriceArea !== "") {
-        let list = [];
-        list = item.publicPriceArea.split("|");
-        let list2 = [];
-        list2 = item.publicPrice.split("|");
-        for (let item = 0; item < list.length; item++) {
-          for (let items = 0; items < list2.length; items++) {
-            // console.log(item, items);
-            if (item === items && list[item] !== "") {
-              let aa = list2[items].split(" ");
-              this.publicPriceList.push({
-                country: list[item],
-                price: aa[0],
-                currency: aa[1],
-              });
-            }
-          }
-        }
-        console.log(this.publicPriceList);
-      } else {
-        this.publicPriceList = [];
-      }
+
       this.crowd = item.crowd;
       this.style = item.style;
       this.transparent = item.transparent;
@@ -2935,7 +2852,41 @@ export default {
       this.powerTime = item.powerTime;
       this.frequency = item.frequency;
       this.movementDes = item.movementDes;
-      this.dialogUpdateWatchVisible = true;
+
+      this.publicPriceList = [];
+      if (item.publicPriceArea !== "") {
+        let list = [];
+        list = item.publicPriceArea.split("|");
+        let list2 = [];
+        list2 = item.publicPrice.split("|");
+        for (let item = 0; item < list.length; item++) {
+          for (let items = 0; items < list2.length; items++) {
+            // console.log(item, items);
+            if (item === items && list[item] !== "") {
+              let aa = list2[items].split(" ");
+              this.publicPriceList.push({
+                country: list[item],
+                price: aa[0],
+                currency: aa[1],
+              });
+            }
+          }
+        }
+        console.log(this.publicPriceList);
+      } else {
+        this.publicPriceList = [];
+      }
+
+      this.watchQuerySel.select = 5;
+      // 页面回到顶部
+      (function smoothscroll() {
+        var currentScroll =
+          document.documentElement.scrollTop || document.body.scrollTop;
+        if (currentScroll > 0) {
+          window.requestAnimationFrame(smoothscroll);
+          window.scrollTo(0, currentScroll - currentScroll / 5);
+        }
+      })();
     },
     // 确定修改
     UpdateWatchSure() {
@@ -2948,7 +2899,6 @@ export default {
             brand: this.addBrand,
             series: this.addSeries,
             model: this.addModel,
-
             pics: this.imgurls.join("|"),
             crowd: this.crowd,
             style: this.style,
@@ -2962,7 +2912,6 @@ export default {
             startYear: this.startYear,
             endYear: this.endYear,
             famous: this.famous,
-
             func: Array.from(new Set(this.funcList)).join("|"),
             des: this.des,
             watchShellSize: this.watchShellSize,
@@ -2970,7 +2919,6 @@ export default {
             watchShellHeight: this.watchShellHeight,
             watchThickness: this.watchThickness,
             glassMaterial: this.glassMaterial,
-
             shellMaterial: Array.from(new Set(this.shellMaterialList)).join(
               "|"
             ),
@@ -3010,7 +2958,7 @@ export default {
               showClose: true,
               duration: 2000,
             });
-            this.dialogUpdateWatchVisible = false;
+            this.watchQuerySel.select = 0;
             this.stockInSearch();
           })
           .catch((err) => {
@@ -3018,10 +2966,8 @@ export default {
             this.$message.success({
               message: err.message,
               showClose: true,
-
               duration: 2000,
             });
-            this.dialogUpdateWatchVisible = false;
           });
       }
     },
@@ -3072,10 +3018,10 @@ export default {
       });
     },
     /*压缩图片
-              file：文件(类型是图片格式)，
-              obj：文件压缩后对象width， height， quality(0-1)
-              callback：容器或者回调函数
-              */
+      file：文件(类型是图片格式)，
+      obj：文件压缩后对象width， height， quality(0-1)
+      callback：容器或者回调函数
+    */
     photoCompress(file, obj, callback) {
       let that = this;
       let ready = new FileReader();
@@ -3393,6 +3339,37 @@ export default {
     .details-top-img {
       width: 100%;
       margin: 0 auto;
+    }
+  }
+}
+
+.update-watch-detail {
+  width: 95%;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 30px;
+
+  .back-img {
+    width: 75px;
+    height: 45px;
+    margin-bottom: 20px;
+    line-height: 45px;
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+
+    div {
+      margin-top: 5px;
+
+      img {
+        width: 30px;
+        height: 25px;
+      }
+    }
+
+    .font {
+      font-size: 17px;
     }
   }
 }
